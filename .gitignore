@@ -12,6 +12,14 @@ dist
 dist-ssr
 *.local
 
+# Next.js / OpenNext / Wrangler build outputs
+.next
+.open-next
+.wrangler
+
+# Claude local state
+.claude
+
 # Environment variables
 .env
 .env.local

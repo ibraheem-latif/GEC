@@ -1,0 +1,225 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --void: #07070C;
+  --deep: #0E0E16;
+  --panel: #171724;
+  --gold: #C4A55A;
+  --gold-bright: #D4B86A;
+  --gold-glow: rgba(196, 165, 90, 0.12);
+  --gold-border: rgba(196, 165, 90, 0.25);
+  --white: #F0EDE6;
+  --white-dim: rgba(240, 237, 230, 0.45);
+  --white-faint: rgba(240, 237, 230, 0.06);
+  --line: rgba(240, 237, 230, 0.08);
+  --line-strong: rgba(240, 237, 230, 0.14);
+}
+
+@layer base {
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--void);
+    color: var(--white);
+    font-family: var(--font-dm-sans), system-ui, sans-serif;
+    @apply antialiased;
+  }
+  * { box-sizing: border-box; }
+  ::selection {
+    background: var(--gold);
+    color: var(--void);
+  }
+}
+
+@layer components {
+  .label {
+    font-family: var(--font-space-mono), monospace;
+    font-size: 0.6rem;
+    font-weight: 400;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--gold);
+  }
+
+  .section-pad {
+    @apply px-6 py-20 md:px-12 md:py-32;
+  }
+
+  .btn-gold {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 2rem;
+    background: var(--gold);
+    color: var(--void);
+    font-family: var(--font-space-mono), monospace;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.25s ease, transform 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-gold:hover {
+    background: var(--gold-bright);
+    transform: translateY(-1px);
+  }
+
+  .btn-gold::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.55s ease;
+    pointer-events: none;
+  }
+
+  .btn-gold:hover::after {
+    left: 160%;
+  }
+
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.875rem 2rem;
+    background: transparent;
+    color: var(--white);
+    font-family: var(--font-space-mono), monospace;
+    font-weight: 400;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    text-decoration: none;
+    border: 1px solid var(--line-strong);
+    cursor: pointer;
+    transition: border-color 0.25s ease, color 0.25s ease;
+  }
+
+  .btn-ghost:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .btn-copper { @apply btn-gold; }
+  .btn-outline { @apply btn-ghost; }
+
+  .form-field {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    background: var(--white-faint);
+    border: 1px solid var(--line);
+    color: var(--white);
+    font-family: var(--font-dm-sans), sans-serif;
+    font-size: 0.9375rem;
+    outline: none;
+    transition: border-color 0.2s ease;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 0;
+  }
+
+  .form-field::placeholder {
+    color: var(--white-dim);
+  }
+
+  .form-field:focus {
+    border-color: var(--gold);
+  }
+
+  .form-field option {
+    background: var(--panel);
+    color: var(--white);
+  }
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--gold); }
+
+.hover-tile {
+  transition: background 0.2s ease;
+}
+.hover-tile:hover {
+  background: rgba(196, 165, 90, 0.05);
+}
+
+.service-card .service-card-img {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.service-card:hover .service-card-img {
+  transform: scale(1.06);
+}
+.service-card .service-card-content {
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.service-card:hover .service-card-content {
+  transform: translateY(-6px);
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 36s linear infinite;
+}
+.marquee-track:hover {
+  animation-play-state: paused;
+}
+
+.gold-rule {
+  width: 2rem;
+  height: 1px;
+  background: var(--gold);
+  display: block;
+  opacity: 0.7;
+}
+
+@keyframes gecMenuDrop {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.gec-hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--white);
+  padding: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+}
+@media (min-width: 768px) {
+  .gec-hamburger { display: none; }
+}
+
+.copper-rule {
+  width: 2.5rem;
+  height: 1px;
+  background: var(--gold);
+  display: block;
+}
