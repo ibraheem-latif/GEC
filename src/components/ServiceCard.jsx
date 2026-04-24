@@ -11,7 +11,7 @@ const ServiceCard = ({ num, title, tagline, image, to }) => {
         position: 'relative',
         overflow: 'hidden',
         aspectRatio: '3 / 2',
-        background: '#080604',
+        background: 'var(--void)',
       }}
     >
       {/* Full-bleed image */}
@@ -26,14 +26,15 @@ const ServiceCard = ({ num, title, tagline, image, to }) => {
           height: '100%',
           objectFit: 'cover',
           objectPosition: 'center',
+          transition: 'transform 0.6s ease',
         }}
       />
 
-      {/* Persistent gradient overlay — deeper at bottom */}
+      {/* Gradient overlay — void-toned */}
       <div style={{
         position: 'absolute',
         inset: 0,
-        background: 'linear-gradient(to top, rgba(8,6,4,0.96) 0%, rgba(8,6,4,0.45) 45%, rgba(8,6,4,0.08) 100%)',
+        background: 'linear-gradient(to top, rgba(7,7,12,0.97) 0%, rgba(7,7,12,0.4) 50%, rgba(7,7,12,0.05) 100%)',
       }} />
 
       {/* Number tag — top left */}
@@ -41,15 +42,15 @@ const ServiceCard = ({ num, title, tagline, image, to }) => {
         position: 'absolute',
         top: '1.5rem',
         left: '1.5rem',
-        fontFamily: '"JetBrains Mono", monospace',
-        fontSize: '0.525rem',
+        fontFamily: "'Space Mono', monospace",
+        fontSize: '0.55rem',
         letterSpacing: '0.22em',
         textTransform: 'uppercase',
-        color: 'var(--copper)',
-        background: 'rgba(8,6,4,0.65)',
+        color: 'var(--gold)',
+        background: 'rgba(7,7,12,0.65)',
         backdropFilter: 'blur(8px)',
-        border: '1px solid rgba(200,115,40,0.25)',
-        padding: '0.35rem 0.7rem',
+        border: '1px solid rgba(196,165,90,0.3)',
+        padding: '0.35rem 0.75rem',
       }}>
         {num}
       </div>
@@ -66,23 +67,25 @@ const ServiceCard = ({ num, title, tagline, image, to }) => {
         }}
       >
         <h3 style={{
-          fontFamily: '"Fraunces", Georgia, serif',
+          fontFamily: "'Playfair Display', Georgia, serif",
           fontSize: 'clamp(1.5rem, 2.5vw, 2rem)',
           fontWeight: 300,
-          color: 'var(--cream)',
+          color: 'var(--white)',
           letterSpacing: '-0.02em',
           lineHeight: 1.1,
           marginBottom: '0.5rem',
+          margin: '0 0 0.5rem 0',
         }}>
           {title}
         </h3>
         <p style={{
-          fontFamily: '"Syne", sans-serif',
+          fontFamily: "'DM Sans', sans-serif",
           fontSize: '0.875rem',
-          color: 'rgba(229,221,208,0.58)',
+          color: 'var(--white-dim)',
           fontStyle: 'italic',
           marginBottom: '1.375rem',
-          lineHeight: 1.5,
+          lineHeight: 1.55,
+          margin: '0 0 1.375rem 0',
         }}>
           {tagline}
         </p>
@@ -90,15 +93,22 @@ const ServiceCard = ({ num, title, tagline, image, to }) => {
           display: 'inline-flex',
           alignItems: 'center',
           gap: '0.625rem',
-          fontFamily: '"JetBrains Mono", monospace',
+          fontFamily: "'Space Mono', monospace",
           fontSize: '0.575rem',
-          letterSpacing: '0.18em',
+          letterSpacing: '0.2em',
           textTransform: 'uppercase',
-          color: 'var(--copper)',
+          color: 'var(--gold)',
+          transition: 'gap 0.3s ease',
         }}>
           Explore
-          <svg width="18" height="8" viewBox="0 0 18 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M0 4H16M16 4L12.5 1M16 4L12.5 7" stroke="#c87328" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round"/>
+          <svg width="18" height="8" viewBox="0 0 18 8" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path
+              d="M0 4H16M16 4L12.5 1M16 4L12.5 7"
+              stroke="var(--gold)"
+              strokeWidth="1.25"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
           </svg>
         </span>
       </div>

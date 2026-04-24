@@ -9,24 +9,24 @@ const ContactPage = () => {
     <>
       <SEOHead title={seo.title} description={seo.description} canonical={seo.canonical} />
 
-      <section style={{ background: 'var(--bg)', paddingTop: '5rem' }}>
+      <section style={{ background: 'var(--void)', paddingTop: '5rem' }}>
         <div style={{
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: 'clamp(1.25rem, 2.5vh, 2rem) clamp(1.5rem, 5vw, 5rem)',
+          padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)',
         }}>
-          <div style={{ marginBottom: 'clamp(1rem, 2vh, 1.5rem)', paddingBottom: '1.25rem', borderBottom: '1px solid var(--border)' }}>
+          <div style={{ marginBottom: 'clamp(2rem, 4vh, 3rem)', paddingBottom: '1.25rem', borderBottom: '1px solid var(--line)' }}>
             <div className="label" style={{ marginBottom: '1rem' }}>Make a Booking</div>
             <h1 style={{
-              fontFamily: '"Fraunces", Georgia, serif',
+              fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
               fontWeight: 300,
               lineHeight: 1.05,
               letterSpacing: '-0.02em',
-              color: 'var(--cream)',
+              color: 'var(--white)',
             }}>
               Get in touch.<br />
-              <em>We respond within the hour.</em>
+              <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>We respond within the hour.</em>
             </h1>
           </div>
           <div

@@ -17,10 +17,10 @@ const Marquee = () => {
   return (
     <div style={{
       overflow: 'hidden',
-      background: 'var(--copper)',
-      padding: '0.8rem 0',
-      borderTop: '1px solid rgba(255,255,255,0.12)',
-      borderBottom: '1px solid rgba(255,255,255,0.12)',
+      background: 'var(--deep)',
+      padding: '1rem 0',
+      borderTop: '1px solid var(--line)',
+      borderBottom: '1px solid var(--line)',
     }}>
       <div className="marquee-track">
         {all.map((item, i) => (
@@ -29,12 +29,12 @@ const Marquee = () => {
             style={{
               display: 'inline-flex',
               alignItems: 'center',
-              fontFamily: '"JetBrains Mono", monospace',
-              fontSize: '0.625rem',
+              fontFamily: '"Space Mono", monospace',
+              fontSize: '0.6rem',
               letterSpacing: '0.2em',
               textTransform: 'uppercase',
-              color: '#0d0b09',
-              fontWeight: 500,
+              color: 'var(--white-dim)',
+              fontWeight: 400,
               whiteSpace: 'nowrap',
               padding: '0 2.5rem',
               gap: '2.5rem',
@@ -42,13 +42,13 @@ const Marquee = () => {
           >
             {item}
             <span style={{
-              width: '3px',
-              height: '3px',
-              background: 'rgba(13,11,9,0.35)',
-              borderRadius: '50%',
+              color: 'var(--gold)',
               display: 'inline-block',
               flexShrink: 0,
-            }} />
+              marginLeft: '2.5rem',
+            }}>
+              ·
+            </span>
           </span>
         ))}
       </div>

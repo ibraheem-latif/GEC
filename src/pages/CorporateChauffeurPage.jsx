@@ -16,28 +16,31 @@ const CorporateChauffeurPage = () => {
     <>
       <SEOHead title={seo.title} description={seo.description} canonical={seo.canonical} />
 
-      <section style={{ background: 'var(--surface)', paddingTop: '7rem' }}>
+      {/* Hero */}
+      <section style={{ background: 'var(--deep)', paddingTop: '7rem' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
           <div className="label" style={{ marginBottom: '1.5rem' }}>Corporate</div>
           <h1 style={{
-            fontFamily: '"Fraunces", Georgia, serif',
-            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+            fontFamily: '"Playfair Display", Georgia, serif',
+            fontSize: 'clamp(2.75rem, 6vw, 5.5rem)',
             fontWeight: 300,
-            lineHeight: 1.05,
+            lineHeight: 1.02,
             letterSpacing: '-0.025em',
-            color: 'var(--cream)',
+            color: 'var(--white)',
             marginBottom: '1.5rem',
             maxWidth: '18ch',
           }}>
-            Corporate Chauffeur <em style={{ color: 'var(--copper)' }}>Service Glasgow</em>
+            Corporate Chauffeur{' '}
+            <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Service Glasgow</em>
           </h1>
-          <p style={{ color: 'var(--cream-dim)', fontSize: '1rem', lineHeight: 1.75, maxWidth: '52ch' }}>
+          <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--white-dim)', fontSize: '1rem', lineHeight: 1.8, maxWidth: '52ch' }}>
             Business travel that works. One-off trips or regular bookings — pick-up from your office, door-to-door service to any meeting, event, or airport. Company accounts welcome.
           </p>
         </div>
       </section>
 
-      <section style={{ background: 'var(--bg)' }}>
+      {/* Image + Benefits */}
+      <section style={{ background: 'var(--void)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
           <div
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'start' }}
@@ -47,20 +50,20 @@ const CorporateChauffeurPage = () => {
               <img
                 src={lexusImage}
                 alt="Corporate chauffeur Lexus"
-                style={{ width: '100%', height: '400px', objectFit: 'cover', marginBottom: '2rem' }}
+                style={{ width: '100%', height: '400px', objectFit: 'cover' }}
               />
             </div>
             <div>
               <div className="label" style={{ marginBottom: '2rem' }}>What We Offer</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
                 {benefits.map(b => (
-                  <div key={b.num} style={{ borderBottom: '1px solid var(--border)', paddingBottom: '2rem' }}>
+                  <div key={b.num} style={{ borderBottom: '1px solid var(--line)', paddingBottom: '2rem' }}>
                     <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
                       <span style={{
-                        fontFamily: '"JetBrains Mono", monospace',
+                        fontFamily: '"Space Mono", monospace',
                         fontSize: '0.575rem',
                         letterSpacing: '0.15em',
-                        color: 'var(--copper)',
+                        color: 'var(--gold)',
                         paddingTop: '0.25rem',
                         flexShrink: 0,
                       }}>
@@ -68,17 +71,17 @@ const CorporateChauffeurPage = () => {
                       </span>
                       <div>
                         <h3 style={{
-                          fontFamily: '"Syne", sans-serif',
+                          fontFamily: '"DM Sans", sans-serif',
                           fontSize: '0.9375rem',
                           fontWeight: 700,
-                          color: 'var(--cream)',
+                          color: 'var(--white)',
                           letterSpacing: '0.04em',
                           textTransform: 'uppercase',
                           marginBottom: '0.5rem',
                         }}>
                           {b.title}
                         </h3>
-                        <p style={{ color: 'var(--cream-dim)', fontSize: '0.9rem', lineHeight: 1.75 }}>{b.desc}</p>
+                        <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--white-dim)', fontSize: '0.9rem', lineHeight: 1.75 }}>{b.desc}</p>
                       </div>
                     </div>
                   </div>
@@ -89,18 +92,20 @@ const CorporateChauffeurPage = () => {
         </div>
       </section>
 
-      <section style={{ background: 'var(--surface)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.25rem, 2.5vh, 2rem) clamp(1.5rem, 5vw, 5rem)' }}>
-          <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--border)' }}>
+      {/* Booking form */}
+      <section style={{ background: 'var(--deep)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
+          <div style={{ marginBottom: '2.5rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--line)' }}>
             <div className="label" style={{ marginBottom: '1rem' }}>Enquire Now</div>
             <h2 style={{
-              fontFamily: '"Fraunces", Georgia, serif',
+              fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               fontWeight: 300,
               letterSpacing: '-0.02em',
-              color: 'var(--cream)',
+              color: 'var(--white)',
             }}>
-              Set up a corporate account.<br /><em>We handle the rest.</em>
+              Set up a corporate account.{' '}
+              <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>We handle the rest.</em>
             </h2>
           </div>
           <div style={{ maxWidth: '720px' }}>

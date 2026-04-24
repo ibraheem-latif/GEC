@@ -26,36 +26,46 @@ const FleetPage = () => {
     <>
       <SEOHead title={seo.title} description={seo.description} canonical={seo.canonical} />
 
-      <section style={{ background: 'var(--surface)', paddingTop: '7rem' }}>
+      {/* Hero */}
+      <section style={{ background: 'var(--deep)', paddingTop: '7rem' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
           <div className="label" style={{ marginBottom: '1.5rem' }}>Our Fleet</div>
           <h1 style={{
-            fontFamily: '"Fraunces", Georgia, serif',
-            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+            fontFamily: '"Playfair Display", Georgia, serif',
+            fontSize: 'clamp(2.75rem, 6vw, 5.5rem)',
             fontWeight: 300,
-            lineHeight: 1.05,
+            lineHeight: 1.02,
             letterSpacing: '-0.025em',
-            color: 'var(--cream)',
+            color: 'var(--white)',
             marginBottom: '1.5rem',
+            maxWidth: '18ch',
           }}>
-            Lexus ES 300h.<br /><em style={{ color: 'var(--copper)' }}>Pure executive comfort.</em>
+            Lexus ES 300h.<br />
+            <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Pure executive comfort.</em>
           </h1>
-          <p style={{ color: 'var(--cream-dim)', fontSize: '1rem', lineHeight: 1.75, maxWidth: '52ch' }}>
+          <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--white-dim)', fontSize: '1rem', lineHeight: 1.8, maxWidth: '52ch' }}>
             Our entire fleet runs the Lexus ES 300h hybrid — smooth, quiet, and genuinely luxurious. Not flashy. Just properly comfortable, every time.
           </p>
         </div>
       </section>
 
+      {/* Full-width car image */}
       <div style={{ height: 'clamp(200px, 30vh, 360px)', overflow: 'hidden' }}>
-        <img src={lexusImage} alt="Lexus ES 300h" style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }} />
+        <img
+          src={lexusImage}
+          alt="Lexus ES 300h"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center' }}
+        />
       </div>
 
-      <section style={{ background: 'var(--bg)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.25rem, 2.5vh, 2rem) clamp(1.5rem, 5vw, 5rem)' }}>
+      {/* Specs + Amenities */}
+      <section style={{ background: 'var(--void)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
           <div
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem' }}
             className="max-md:!grid-cols-1"
           >
+            {/* Vehicle Specifications */}
             <div>
               <div className="label" style={{ marginBottom: '2rem' }}>Vehicle Specifications</div>
               {specs.map(s => (
@@ -65,21 +75,21 @@ const FleetPage = () => {
                   gap: '1rem',
                   paddingBottom: '1.25rem',
                   marginBottom: '1.25rem',
-                  borderBottom: '1px solid var(--border)',
+                  borderBottom: '1px solid var(--line)',
                 }}>
                   <span style={{
-                    fontFamily: '"JetBrains Mono", monospace',
+                    fontFamily: '"Space Mono", monospace',
                     fontSize: '0.575rem',
                     letterSpacing: '0.15em',
                     textTransform: 'uppercase',
-                    color: 'var(--cream-dim)',
+                    color: 'var(--white-dim)',
                   }}>
                     {s.label}
                   </span>
                   <span style={{
-                    fontFamily: '"Syne", sans-serif',
+                    fontFamily: '"DM Sans", sans-serif',
                     fontSize: '0.9375rem',
-                    color: 'var(--cream)',
+                    color: 'var(--white)',
                     fontWeight: 500,
                   }}>
                     {s.value}
@@ -88,22 +98,23 @@ const FleetPage = () => {
               ))}
             </div>
 
+            {/* Passenger Amenities */}
             <div>
               <div className="label" style={{ marginBottom: '2rem' }}>Passenger Amenities</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                 {amenities.map(a => (
                   <div key={a.num} style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
                     <span style={{
-                      fontFamily: '"JetBrains Mono", monospace',
+                      fontFamily: '"Space Mono", monospace',
                       fontSize: '0.575rem',
                       letterSpacing: '0.15em',
-                      color: 'var(--copper)',
+                      color: 'var(--gold)',
                       paddingTop: '0.25rem',
                       flexShrink: 0,
                     }}>
                       {a.num}
                     </span>
-                    <span style={{ color: 'var(--cream)', fontSize: '0.9375rem', lineHeight: 1.6 }}>{a.text}</span>
+                    <span style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--white)', fontSize: '0.9375rem', lineHeight: 1.6 }}>{a.text}</span>
                   </div>
                 ))}
               </div>
@@ -112,8 +123,9 @@ const FleetPage = () => {
         </div>
       </section>
 
-      <section style={{ background: 'var(--surface)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 clamp(1.5rem, 5vw, 5rem) clamp(1.25rem, 2.5vh, 2rem)' }}>
+      {/* CTA */}
+      <section style={{ background: 'var(--deep)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 clamp(1.5rem, 5vw, 5rem) clamp(3rem, 6vh, 5rem)' }}>
           <CTABanner heading="Ready to travel in style?" />
         </div>
       </section>

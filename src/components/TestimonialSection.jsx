@@ -24,7 +24,7 @@ const testimonials = [
 const Stars = () => (
   <div style={{ display: 'flex', gap: '0.3rem', marginBottom: '1.5rem' }}>
     {[...Array(5)].map((_, i) => (
-      <svg key={i} width="13" height="13" viewBox="0 0 13 13" fill="var(--copper)">
+      <svg key={i} width="13" height="13" viewBox="0 0 13 13" fill="var(--gold)">
         <path d="M6.5 0.5L8.09 4.64H12.5L9.02 7.22L10.36 11.5L6.5 9.1L2.64 11.5L3.98 7.22L0.5 4.64H4.91L6.5 0.5Z" />
       </svg>
     ))}
@@ -35,7 +35,7 @@ const TestimonialSection = () => {
   const [featured, ...rest] = testimonials
 
   return (
-    <section style={{ background: 'var(--bg)', position: 'relative', overflow: 'hidden' }}>
+    <section style={{ background: 'var(--void)', position: 'relative', overflow: 'hidden' }}>
       {/* Decorative background quote mark */}
       <div
         aria-hidden="true"
@@ -43,10 +43,10 @@ const TestimonialSection = () => {
           position: 'absolute',
           top: '-0.1em',
           right: '-0.02em',
-          fontFamily: '"Fraunces", Georgia, serif',
-          fontSize: 'clamp(20rem, 45vw, 56rem)',
+          fontFamily: '"Playfair Display", Georgia, serif',
+          fontSize: 'clamp(18rem, 45vw, 55rem)',
           fontWeight: 800,
-          color: 'rgba(200,115,40,0.035)',
+          color: 'rgba(196,165,90,0.03)',
           lineHeight: 1,
           pointerEvents: 'none',
           userSelect: 'none',
@@ -72,7 +72,7 @@ const TestimonialSection = () => {
           style={{
             marginBottom: 'clamp(1rem, 2vh, 1.5rem)',
             paddingBottom: '1.25rem',
-            borderBottom: '1px solid var(--border)',
+            borderBottom: '1px solid var(--line)',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-end',
@@ -83,17 +83,24 @@ const TestimonialSection = () => {
           <div>
             <div className="label" style={{ marginBottom: '1rem' }}>Client Testimonials</div>
             <h2 style={{
-              fontFamily: '"Fraunces", Georgia, serif',
+              fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
               fontWeight: 300,
               lineHeight: 1.05,
               letterSpacing: '-0.02em',
-              color: 'var(--cream)',
+              color: 'var(--white)',
             }}>
-              What our clients<br /><em>have to say.</em>
+              What our clients<br />
+              <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>have to say.</em>
             </h2>
           </div>
-          <p style={{ color: 'var(--cream-dim)', maxWidth: '30ch', fontSize: '0.9375rem', lineHeight: 1.7 }}>
+          <p style={{
+            fontFamily: '"DM Sans", sans-serif',
+            color: 'var(--white-dim)',
+            maxWidth: '30ch',
+            fontSize: '0.9375rem',
+            lineHeight: 1.7,
+          }}>
             Over a decade of getting people where they need to be — on time, in comfort.
           </p>
         </motion.div>
@@ -105,10 +112,10 @@ const TestimonialSection = () => {
           transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
           viewport={{ once: true, margin: '-40px' }}
           style={{
-            background: 'var(--surface)',
-            borderTop: '1px solid var(--border)',
-            borderBottom: '1px solid var(--border)',
-            borderLeft: '3px solid var(--copper)',
+            background: 'var(--deep)',
+            borderTop: '1px solid var(--line)',
+            borderBottom: '1px solid var(--line)',
+            borderLeft: '2px solid var(--gold)',
             padding: 'clamp(1rem, 2.5vw, 1.75rem)',
             marginBottom: '1rem',
             display: 'grid',
@@ -121,12 +128,12 @@ const TestimonialSection = () => {
           <div>
             <Stars />
             <p style={{
-              fontFamily: '"Fraunces", Georgia, serif',
+              fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(1.125rem, 2.2vw, 1.625rem)',
               fontStyle: 'italic',
               fontWeight: 300,
               lineHeight: 1.65,
-              color: 'var(--cream)',
+              color: 'var(--white)',
               maxWidth: '68ch',
             }}>
               &ldquo;{featured.text}&rdquo;
@@ -134,18 +141,18 @@ const TestimonialSection = () => {
           </div>
           <div style={{ textAlign: 'right', flexShrink: 0 }}>
             <div style={{
-              fontFamily: '"Syne", sans-serif',
+              fontFamily: '"DM Sans", sans-serif',
               fontWeight: 700,
               fontSize: '0.9rem',
-              color: 'var(--cream)',
+              color: 'var(--white)',
               marginBottom: '0.35rem',
             }}>
               {featured.name}
             </div>
-            <div className="label" style={{ fontSize: '0.5rem', color: 'var(--cream-dim)' }}>
+            <div className="label" style={{ fontSize: '0.5rem', color: 'var(--white-dim)' }}>
               {featured.location}
             </div>
-            <div className="label" style={{ fontSize: '0.5rem', color: 'var(--copper)', marginTop: '0.35rem' }}>
+            <div className="label" style={{ fontSize: '0.5rem', color: 'var(--gold)', marginTop: '0.35rem' }}>
               {featured.service}
             </div>
           </div>
@@ -164,9 +171,9 @@ const TestimonialSection = () => {
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: i * 0.12 }}
               viewport={{ once: true, margin: '-40px' }}
               style={{
-                border: '1px solid var(--border)',
+                border: '1px solid var(--line)',
                 padding: 'clamp(1rem, 2vw, 1.5rem)',
-                background: 'var(--cream-faint)',
+                background: 'var(--white-faint)',
                 display: 'flex',
                 flexDirection: 'column',
                 gap: '0.75rem',
@@ -174,30 +181,40 @@ const TestimonialSection = () => {
             >
               <Stars />
               <p style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontSize: 'clamp(0.95rem, 1.4vw, 1.0625rem)',
+                fontFamily: '"Playfair Display", Georgia, serif',
+                fontSize: 'clamp(0.95rem, 1.4vw, 1.05rem)',
                 fontStyle: 'italic',
                 fontWeight: 300,
                 lineHeight: 1.75,
-                color: 'var(--cream)',
+                color: 'var(--white)',
                 flex: 1,
               }}>
                 &ldquo;{t.text}&rdquo;
               </p>
-              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '1.25rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{
+                borderTop: '1px solid var(--line)',
+                paddingTop: '1.25rem',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
                 <div>
                   <div style={{
-                    fontFamily: '"Syne", sans-serif',
+                    fontFamily: '"DM Sans", sans-serif',
                     fontWeight: 700,
                     fontSize: '0.875rem',
-                    color: 'var(--cream)',
+                    color: 'var(--white)',
                     marginBottom: '0.25rem',
                   }}>
                     {t.name}
                   </div>
-                  <div className="label" style={{ fontSize: '0.5rem', color: 'var(--cream-dim)' }}>{t.location}</div>
+                  <div className="label" style={{ fontSize: '0.5rem', color: 'var(--white-dim)' }}>
+                    {t.location}
+                  </div>
                 </div>
-                <div className="label" style={{ fontSize: '0.5rem', color: 'var(--copper)' }}>{t.service}</div>
+                <div className="label" style={{ fontSize: '0.5rem', color: 'var(--gold)' }}>
+                  {t.service}
+                </div>
               </div>
             </motion.div>
           ))}

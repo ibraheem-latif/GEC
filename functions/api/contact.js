@@ -14,10 +14,11 @@ export async function onRequestPost(context) {
     }
 
     const RESEND_API_KEY = env.RESEND_API_KEY
-    const TO_EMAIL = env.TO_EMAIL || 'bookings@glasgowexecutivechauffeurs.co.uk'
+    const TO_EMAIL = env.TO_EMAIL || 'bookings@gec.limo'
 
     if (!RESEND_API_KEY) {
-      return Response.json({ success: true, message: 'Booking request received' })
+      console.error('RESEND_API_KEY is not configured')
+      return Response.json({ error: 'Email service is not configured' }, { status: 500 })
     }
 
     const response = await fetch('https://api.resend.com/emails', {
@@ -27,7 +28,7 @@ export async function onRequestPost(context) {
         'Authorization': `Bearer ${RESEND_API_KEY}`,
       },
       body: JSON.stringify({
-        from: 'Glasgow Executive Chauffeurs <bookings@glasgowexecutivechauffeurs.co.uk>',
+        from: 'Glasgow Executive Chauffeurs <bookings@gec.limo>',
         to: [TO_EMAIL],
         reply_to: email,
         subject: `New Booking Request from ${name}`,

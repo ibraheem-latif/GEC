@@ -1,104 +1,128 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Syne:wght@400;500;600;700;800&family=JetBrains+Mono:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300..900;1,300..900&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg: #0d0b09;
-  --surface: #131110;
-  --surface-raised: #1c1917;
-  --border: rgba(229, 221, 208, 0.08);
-  --border-strong: rgba(229, 221, 208, 0.16);
-  --copper: #c87328;
-  --copper-glow: rgba(200, 115, 40, 0.18);
-  --cream: #e5ddd0;
-  --cream-dim: rgba(229, 221, 208, 0.5);
-  --cream-faint: rgba(229, 221, 208, 0.07);
+  --void: #07070C;
+  --deep: #0E0E16;
+  --panel: #171724;
+  --gold: #C4A55A;
+  --gold-bright: #D4B86A;
+  --gold-glow: rgba(196, 165, 90, 0.12);
+  --gold-border: rgba(196, 165, 90, 0.25);
+  --white: #F0EDE6;
+  --white-dim: rgba(240, 237, 230, 0.45);
+  --white-faint: rgba(240, 237, 230, 0.06);
+  --line: rgba(240, 237, 230, 0.08);
+  --line-strong: rgba(240, 237, 230, 0.14);
 }
 
 @layer base {
   html { scroll-behavior: smooth; }
   body {
-    background-color: var(--bg);
-    color: var(--cream);
-    font-family: 'Syne', system-ui, sans-serif;
+    background-color: var(--void);
+    color: var(--white);
+    font-family: 'DM Sans', system-ui, sans-serif;
     @apply antialiased;
   }
   * { box-sizing: border-box; }
   ::selection {
-    background: var(--copper);
-    color: var(--bg);
+    background: var(--gold);
+    color: var(--void);
   }
 }
 
 @layer components {
   .label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.6375rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
     font-weight: 400;
-    letter-spacing: 0.2em;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    color: var(--copper);
+    color: var(--gold);
   }
 
   .section-pad {
     @apply px-6 py-20 md:px-12 md:py-32;
   }
 
-  .btn-copper {
+  .btn-gold {
     display: inline-flex;
     align-items: center;
     gap: 0.625rem;
     padding: 0.875rem 2rem;
-    background: var(--copper);
-    color: var(--bg);
-    font-family: 'Syne', sans-serif;
+    background: var(--gold);
+    color: var(--void);
+    font-family: 'Space Mono', monospace;
     font-weight: 700;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     text-decoration: none;
     border: none;
     cursor: pointer;
-    transition: opacity 0.25s ease, transform 0.2s ease;
+    transition: background 0.25s ease, transform 0.2s ease;
+    position: relative;
+    overflow: hidden;
   }
 
-  .btn-copper:hover {
-    opacity: 0.85;
+  .btn-gold:hover {
+    background: var(--gold-bright);
     transform: translateY(-1px);
   }
 
-  .btn-outline {
+  .btn-gold::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 60%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.55s ease;
+    pointer-events: none;
+  }
+
+  .btn-gold:hover::after {
+    left: 160%;
+  }
+
+  .btn-ghost {
     display: inline-flex;
     align-items: center;
     gap: 0.625rem;
     padding: 0.875rem 2rem;
     background: transparent;
-    color: var(--cream);
-    font-family: 'Syne', sans-serif;
-    font-weight: 600;
-    font-size: 0.8rem;
-    letter-spacing: 0.08em;
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-weight: 400;
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
     text-decoration: none;
-    border: 1px solid var(--border-strong);
+    border: 1px solid var(--line-strong);
     cursor: pointer;
     transition: border-color 0.25s ease, color 0.25s ease;
   }
 
-  .btn-outline:hover {
-    border-color: var(--copper);
-    color: var(--copper);
+  .btn-ghost:hover {
+    border-color: var(--gold);
+    color: var(--gold);
   }
+
+  /* Legacy aliases so ContactForm + other consumers still work */
+  .btn-copper { @apply btn-gold; }
+  .btn-outline { @apply btn-ghost; }
 
   .form-field {
     width: 100%;
     padding: 0.875rem 1rem;
-    background: var(--cream-faint);
-    border: 1px solid var(--border);
-    color: var(--cream);
-    font-family: 'Syne', sans-serif;
+    background: var(--white-faint);
+    border: 1px solid var(--line);
+    color: var(--white);
+    font-family: 'DM Sans', sans-serif;
     font-size: 0.9375rem;
     outline: none;
     transition: border-color 0.2s ease;
@@ -108,16 +132,16 @@
   }
 
   .form-field::placeholder {
-    color: var(--cream-dim);
+    color: var(--white-dim);
   }
 
   .form-field:focus {
-    border-color: var(--copper);
+    border-color: var(--gold);
   }
 
   .form-field option {
-    background: #1c1917;
-    color: var(--cream);
+    background: var(--panel);
+    color: var(--white);
   }
 }
 
@@ -128,29 +152,29 @@ body::after {
   inset: 0;
   pointer-events: none;
   z-index: 9999;
-  opacity: 0.03;
+  opacity: 0.025;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--copper); }
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--void); }
+::-webkit-scrollbar-thumb { background: var(--gold); }
 
 /* ── Service card hover ── */
 .service-card .service-card-img {
   transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .service-card:hover .service-card-img {
-  transform: scale(1.07);
+  transform: scale(1.06);
 }
 .service-card .service-card-content {
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .service-card:hover .service-card-content {
-  transform: translateY(-8px);
+  transform: translateY(-6px);
 }
 
-/* ── Marquee animation ── */
+/* ── Marquee ── */
 @keyframes marquee {
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
@@ -158,36 +182,25 @@ body::after {
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee 32s linear infinite;
+  animation: marquee 36s linear infinite;
 }
 .marquee-track:hover {
   animation-play-state: paused;
 }
 
-/* ── Button shimmer ── */
-.btn-copper {
-  position: relative;
-  overflow: hidden;
-}
-.btn-copper::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent);
-  transition: left 0.55s ease;
-  pointer-events: none;
-}
-.btn-copper:hover::after {
-  left: 160%;
+/* ── Gold hairline rule ── */
+.gold-rule {
+  width: 2rem;
+  height: 1px;
+  background: var(--gold);
+  display: block;
+  opacity: 0.7;
 }
 
-/* ── Copper rule accent ── */
+/* ── Copper rule alias ── */
 .copper-rule {
   width: 2.5rem;
   height: 1px;
-  background: var(--copper);
+  background: var(--gold);
   display: block;
 }

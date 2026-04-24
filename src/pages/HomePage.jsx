@@ -3,7 +3,6 @@ import { AnimatedHero } from '../components/ui/animated-hero'
 import WhyChooseUs from '../components/WhyChooseUs'
 import ServiceCard from '../components/ServiceCard'
 import TestimonialSection from '../components/TestimonialSection'
-import CTABanner from '../components/CTABanner'
 import SEOHead from '../components/SEOHead'
 import Marquee from '../components/ui/Marquee'
 import { SEO_CONFIG, buildLocalBusinessSchema } from '../lib/seo'
@@ -48,11 +47,11 @@ const HomePage = () => {
       <AnimatedHero />
       <Marquee />
 
-      <section style={{ background: 'var(--bg)' }}>
+      <section style={{ background: 'var(--void)' }}>
         <div style={{
           maxWidth: '1400px',
           margin: '0 auto',
-          padding: 'clamp(1.25rem, 2.5vh, 2rem) clamp(1.5rem, 5vw, 5rem)',
+          padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)',
         }}>
           <motion.div
             initial={{ opacity: 0, y: 24 }}
@@ -60,9 +59,9 @@ const HomePage = () => {
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
             viewport={{ once: true, margin: '-60px' }}
             style={{
-              marginBottom: 'clamp(1rem, 2vh, 1.5rem)',
-              paddingBottom: '1.25rem',
-              borderBottom: '1px solid var(--border)',
+              marginBottom: 'clamp(2rem, 3.5vh, 3rem)',
+              paddingBottom: '1.5rem',
+              borderBottom: '1px solid var(--line)',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'flex-end',
@@ -71,22 +70,30 @@ const HomePage = () => {
             }}
           >
             <div>
-              <div className="label" style={{ marginBottom: '1rem' }}>What We Do</div>
+              <div className="label" style={{ marginBottom: '1.25rem' }}>What We Do</div>
               <h2 style={{
-                fontFamily: '"Fraunces", Georgia, serif',
-                fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
+                fontFamily: '"Playfair Display", Georgia, serif',
+                fontSize: 'clamp(2.25rem, 4.5vw, 3.75rem)',
                 fontWeight: 300,
                 lineHeight: 1.05,
-                letterSpacing: '-0.02em',
-                color: 'var(--cream)',
+                letterSpacing: '-0.022em',
+                color: 'var(--white)',
               }}>
-                Services across<br /><em>Glasgow & Scotland</em>
+                Services across<br />
+                <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Glasgow & Scotland</em>
               </h2>
             </div>
-            <p style={{ color: 'var(--cream-dim)', maxWidth: '30ch', fontSize: '0.9375rem', lineHeight: 1.7 }}>
+            <p style={{
+              color: 'var(--white-dim)',
+              fontFamily: '"DM Sans", sans-serif',
+              maxWidth: '32ch',
+              fontSize: '0.9375rem',
+              lineHeight: 1.75,
+            }}>
               Airport runs, business travel, or a grand tour — book us for an hour or the whole day.
             </p>
           </motion.div>
+
           <div
             style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1.5rem' }}
             className="max-md:!grid-cols-1"

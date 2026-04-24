@@ -36,7 +36,7 @@ const benefits = [
 
 const WhyChooseUs = () => {
   return (
-    <section id="why-us" style={{ background: 'var(--surface)' }}>
+    <section id="why-us" style={{ background: 'var(--deep)' }}>
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
@@ -56,23 +56,30 @@ const WhyChooseUs = () => {
             flexWrap: 'wrap',
             gap: '2rem',
             paddingBottom: '1.25rem',
-            borderBottom: '1px solid var(--border)',
+            borderBottom: '1px solid var(--line)',
           }}
         >
           <div>
             <div className="label" style={{ marginBottom: '1rem' }}>Why Choose Us</div>
             <h2 style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontSize: 'clamp(2rem, 4.5vw, 3.5rem)',
+              fontFamily: '"Playfair Display", Georgia, serif',
+              fontSize: 'clamp(2.25rem, 4.5vw, 3.75rem)',
               fontWeight: 300,
               lineHeight: 1.05,
               letterSpacing: '-0.02em',
-              color: 'var(--cream)',
+              color: 'var(--white)',
             }}>
-              Why people<br /><em>keep coming back.</em>
+              Why people<br />
+              <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>keep coming back.</em>
             </h2>
           </div>
-          <p style={{ color: 'var(--cream-dim)', maxWidth: '32ch', fontSize: '0.9375rem', lineHeight: 1.7 }}>
+          <p style={{
+            fontFamily: '"DM Sans", sans-serif',
+            color: 'var(--white-dim)',
+            maxWidth: '32ch',
+            fontSize: '0.9375rem',
+            lineHeight: 1.7,
+          }}>
             We're not the cheapest and we won't pretend to be. But we show up, we're on time, and we look after you properly.
           </p>
         </motion.div>
@@ -82,8 +89,8 @@ const WhyChooseUs = () => {
           style={{
             display: 'grid',
             gridTemplateColumns: 'repeat(3, 1fr)',
-            borderTop: '1px solid var(--border)',
-            borderLeft: '1px solid var(--border)',
+            borderTop: '1px solid var(--line)',
+            borderLeft: '1px solid var(--line)',
           }}
           className="max-md:!grid-cols-2 max-sm:!grid-cols-1"
         >
@@ -100,22 +107,22 @@ const WhyChooseUs = () => {
               viewport={{ once: true, margin: '-30px' }}
               style={{
                 padding: 'clamp(0.875rem, 1.5vw, 1.25rem)',
-                borderRight: '1px solid var(--border)',
-                borderBottom: '1px solid var(--border)',
+                borderRight: '1px solid var(--line)',
+                borderBottom: '1px solid var(--line)',
                 transition: 'background 0.3s ease',
                 position: 'relative',
                 overflow: 'hidden',
                 cursor: 'default',
               }}
-              onMouseEnter={e => e.currentTarget.style.background = 'rgba(200, 115, 40, 0.05)'}
+              onMouseEnter={e => e.currentTarget.style.background = 'rgba(196,165,90,0.05)'}
               onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
             >
               {/* Large background number */}
               <div style={{
-                fontFamily: '"Fraunces", Georgia, serif',
+                fontFamily: '"Playfair Display", Georgia, serif',
                 fontSize: '4rem',
                 fontWeight: 800,
-                color: 'rgba(229, 221, 208, 0.04)',
+                color: 'rgba(240,237,230,0.03)',
                 lineHeight: 1,
                 marginBottom: '-0.5rem',
                 letterSpacing: '-0.04em',
@@ -123,26 +130,34 @@ const WhyChooseUs = () => {
               }}>
                 {b.num}
               </div>
-              {/* Copper accent line */}
+
+              {/* Gold accent line */}
               <div style={{
-                width: '1.75rem',
+                width: '1.5rem',
                 height: '1px',
-                background: 'var(--copper)',
+                background: 'var(--gold)',
                 marginBottom: '1rem',
-                opacity: 0.7,
+                opacity: 0.6,
               }} />
+
               <h3 style={{
-                fontFamily: '"Syne", sans-serif',
-                fontSize: '0.875rem',
+                fontFamily: '"DM Sans", sans-serif',
+                fontSize: '0.8rem',
                 fontWeight: 700,
-                color: 'var(--cream)',
-                letterSpacing: '0.06em',
+                color: 'var(--white)',
+                letterSpacing: '0.07em',
                 textTransform: 'uppercase',
                 marginBottom: '0.875rem',
               }}>
                 {b.title}
               </h3>
-              <p style={{ color: 'var(--cream-dim)', fontSize: '0.9rem', lineHeight: 1.8 }}>
+
+              <p style={{
+                fontFamily: '"DM Sans", sans-serif',
+                color: 'var(--white-dim)',
+                fontSize: '0.9rem',
+                lineHeight: 1.8,
+              }}>
                 {b.desc}
               </p>
             </motion.div>

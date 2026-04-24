@@ -22,98 +22,141 @@ const Footer = () => {
     ],
   }
 
+  const linkStyle = {
+    color: 'var(--white-dim)',
+    fontSize: '0.875rem',
+    fontFamily: "'DM Sans', sans-serif",
+    textDecoration: 'none',
+    transition: 'color 0.3s ease',
+    lineHeight: 1.6,
+  }
+
   return (
-    <footer style={{ background: 'var(--surface)', borderTop: '1px solid var(--border)' }}>
+    <footer style={{ background: 'var(--deep)', borderTop: '1px solid var(--line)' }}>
       <div style={{
         maxWidth: '1400px',
         margin: '0 auto',
-        padding: 'clamp(3.5rem, 7vh, 5.5rem) clamp(1.5rem, 5vw, 5rem) clamp(2rem, 4vh, 3.5rem)',
+        padding: 'clamp(4rem, 8vh, 6rem) clamp(1.5rem, 5vw, 5rem) clamp(2rem, 4vh, 3.5rem)',
       }}>
 
-        {/* Footer CTA — above the link grid */}
+        {/* Footer CTA */}
         <div style={{
-          paddingBottom: 'clamp(3rem, 6vh, 5rem)',
-          borderBottom: '1px solid var(--border)',
-          marginBottom: 'clamp(3rem, 5vh, 4.5rem)',
+          paddingBottom: 'clamp(3.5rem, 7vh, 5.5rem)',
+          borderBottom: '1px solid var(--line)',
+          marginBottom: 'clamp(3.5rem, 6vh, 5rem)',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'flex-end',
           flexWrap: 'wrap',
-          gap: '2rem',
+          gap: '2.5rem',
         }}>
           <div>
-            <div className="label" style={{ marginBottom: '1rem' }}>Get a quote today</div>
+            <div className="label" style={{ marginBottom: '1.25rem' }}>
+              Get a quote today
+            </div>
             <h2 style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontSize: 'clamp(2.25rem, 5vw, 4.5rem)',
+              fontFamily: "'Playfair Display', Georgia, serif",
+              fontSize: 'clamp(2.5rem, 5.5vw, 5rem)',
               fontWeight: 300,
               letterSpacing: '-0.03em',
-              color: 'var(--cream)',
-              lineHeight: 1,
+              color: 'var(--white)',
+              lineHeight: 1.05,
+              margin: 0,
             }}>
-              Ready for your<br /><em style={{ color: 'var(--copper)', fontStyle: 'italic' }}>next journey?</em>
+              Ready for your<br />
+              <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>next journey?</em>
             </h2>
           </div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '1rem' }}>
-            <Link to="/contact" className="btn-copper">Book Now</Link>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '1.125rem' }}>
+            <Link to="/contact" className="btn-gold">
+              Book Now
+            </Link>
             <a
               href={`mailto:${EMAIL}`}
               style={{
-                color: 'var(--cream-dim)',
-                fontSize: '0.8125rem',
-                fontFamily: '"Syne", sans-serif',
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '0.6rem',
+                letterSpacing: '0.16em',
+                textTransform: 'uppercase',
+                color: 'var(--white-dim)',
                 textDecoration: 'none',
-                letterSpacing: '0.02em',
-                transition: 'color 0.2s ease',
+                transition: 'color 0.3s ease',
               }}
-              onMouseEnter={e => e.currentTarget.style.color = 'var(--copper)'}
-              onMouseLeave={e => e.currentTarget.style.color = 'var(--cream-dim)'}
+              onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--white-dim)'}
             >
               {EMAIL}
             </a>
           </div>
         </div>
 
-        {/* Top section */}
+        {/* Link grid */}
         <div
           style={{
             display: 'grid',
             gridTemplateColumns: '2fr 1fr 1fr 1fr',
             gap: '3rem',
-            paddingBottom: '3rem',
-            borderBottom: '1px solid var(--border)',
+            paddingBottom: '3.5rem',
+            borderBottom: '1px solid var(--line)',
             marginBottom: '2.5rem',
           }}
           className="max-md:!grid-cols-2 max-sm:!grid-cols-1"
         >
-
-          {/* Brand */}
+          {/* Brand column */}
           <div>
-            <Link to="/" style={{ textDecoration: 'none' }}>
+            <Link
+              to="/"
+              style={{ textDecoration: 'none', display: 'flex', flexDirection: 'column', lineHeight: 1, width: 'fit-content' }}
+            >
               <span style={{
-                fontFamily: '"Fraunces", Georgia, serif',
+                fontFamily: "'Playfair Display', Georgia, serif",
                 fontSize: '1.75rem',
                 fontWeight: 300,
-                letterSpacing: '-0.02em',
-                color: 'var(--cream)',
+                letterSpacing: '-0.01em',
+                color: 'var(--gold)',
+                lineHeight: 1,
               }}>
-                Glasgow <em style={{ color: 'var(--copper)', fontStyle: 'italic' }}>Executive</em> Chauffeurs
+                GEC
+              </span>
+              <span style={{
+                fontFamily: "'Space Mono', monospace",
+                fontSize: '0.42rem',
+                fontWeight: 400,
+                letterSpacing: '0.2em',
+                textTransform: 'uppercase',
+                color: 'var(--white-dim)',
+                lineHeight: 1,
+                marginTop: '0.3rem',
+              }}>
+                Glasgow Executive Chauffeurs
               </span>
             </Link>
+
             <p style={{
-              color: 'var(--cream-dim)',
+              color: 'var(--white-dim)',
               fontSize: '0.875rem',
-              lineHeight: 1.7,
-              marginTop: '1rem',
+              fontFamily: "'DM Sans', sans-serif",
+              lineHeight: 1.75,
+              marginTop: '1.5rem',
               maxWidth: '28ch',
             }}>
               Professional chauffeur service based in Glasgow. Serving Scotland since 2014.
             </p>
-            <div style={{ marginTop: '1.5rem' }}>
+
+            <div style={{ marginTop: '1.75rem' }}>
               <a
                 href={`mailto:${EMAIL}`}
-                className="label"
-                style={{ color: 'var(--copper)', textDecoration: 'none' }}
+                style={{
+                  fontFamily: "'Space Mono', monospace",
+                  fontSize: '0.575rem',
+                  letterSpacing: '0.16em',
+                  textTransform: 'uppercase',
+                  color: 'var(--gold)',
+                  textDecoration: 'none',
+                  transition: 'opacity 0.3s ease',
+                }}
+                onMouseEnter={e => e.currentTarget.style.opacity = '0.7'}
+                onMouseLeave={e => e.currentTarget.style.opacity = '1'}
               >
                 {EMAIL}
               </a>
@@ -123,21 +166,15 @@ const Footer = () => {
           {/* Link columns */}
           {Object.entries(sections).map(([title, links]) => (
             <div key={title}>
-              <div className="label" style={{ marginBottom: '1.25rem' }}>{title}</div>
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.875rem' }}>
+              <div className="label" style={{ marginBottom: '1.5rem' }}>{title}</div>
+              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                 {links.map((link) => (
                   <li key={link.label}>
                     <Link
                       to={link.to}
-                      style={{
-                        color: 'var(--cream-dim)',
-                        fontSize: '0.875rem',
-                        textDecoration: 'none',
-                        fontFamily: '"Syne", sans-serif',
-                        transition: 'color 0.2s ease',
-                      }}
-                      onMouseEnter={e => e.currentTarget.style.color = 'var(--cream)'}
-                      onMouseLeave={e => e.currentTarget.style.color = 'var(--cream-dim)'}
+                      style={linkStyle}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--white-dim)'}
                     >
                       {link.label}
                     </Link>
@@ -157,11 +194,14 @@ const Footer = () => {
           gap: '1rem',
         }}>
           <p style={{
-            color: 'var(--cream-dim)',
-            fontSize: '0.8rem',
-            fontFamily: '"Syne", sans-serif',
+            color: 'var(--white-dim)',
+            fontSize: '0.725rem',
+            fontFamily: "'Space Mono', monospace",
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            margin: 0,
           }}>
-            © {year} Glasgow Executive Chauffeurs
+            &copy; {year} Glasgow Executive Chauffeurs
           </p>
           <div style={{ display: 'flex', gap: '2rem' }}>
             {['Privacy', 'Terms', 'Cookies'].map(item => (
@@ -169,20 +209,23 @@ const Footer = () => {
                 key={item}
                 href="#"
                 style={{
-                  color: 'var(--cream-dim)',
-                  fontSize: '0.8rem',
+                  color: 'var(--white-dim)',
+                  fontSize: '0.725rem',
+                  fontFamily: "'Space Mono', monospace",
+                  letterSpacing: '0.1em',
+                  textTransform: 'uppercase',
                   textDecoration: 'none',
-                  fontFamily: '"Syne", sans-serif',
-                  transition: 'color 0.2s ease',
+                  transition: 'color 0.3s ease',
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = 'var(--copper)'}
-                onMouseLeave={e => e.currentTarget.style.color = 'var(--cream-dim)'}
+                onMouseEnter={e => e.currentTarget.style.color = 'var(--gold)'}
+                onMouseLeave={e => e.currentTarget.style.color = 'var(--white-dim)'}
               >
                 {item}
               </a>
             ))}
           </div>
         </div>
+
       </div>
     </footer>
   )

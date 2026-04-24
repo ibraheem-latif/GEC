@@ -9,25 +9,26 @@ const CTABanner = ({
   return (
     <div style={{
       marginTop: 'clamp(2.5rem, 5vh, 4rem)',
-      padding: 'clamp(2.25rem, 4vw, 3.5rem)',
-      background: 'var(--copper)',
+      padding: 'clamp(2.5rem, 5vw, 4rem) clamp(2rem, 5vw, 4rem)',
+      background: 'var(--gold)',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexWrap: 'wrap',
-      gap: '2rem',
+      gap: '2.5rem',
       position: 'relative',
       overflow: 'hidden',
     }}>
-      {/* Decorative large text background */}
+
+      {/* Decorative large background text */}
       <div aria-hidden="true" style={{
         position: 'absolute',
         right: '-0.05em',
-        top: '-0.25em',
-        fontFamily: '"Fraunces", Georgia, serif',
-        fontSize: 'clamp(6rem, 15vw, 14rem)',
-        fontWeight: 800,
-        color: 'rgba(13,11,9,0.07)',
+        top: '-0.2em',
+        fontFamily: "'Playfair Display', Georgia, serif",
+        fontSize: 'clamp(7rem, 16vw, 15rem)',
+        fontWeight: 300,
+        color: 'rgba(7,7,12,0.07)',
         lineHeight: 1,
         pointerEvents: 'none',
         userSelect: 'none',
@@ -36,49 +37,55 @@ const CTABanner = ({
       }}>
         GEC
       </div>
+
+      {/* Text content */}
       <div style={{ position: 'relative' }}>
         <div style={{
-          fontFamily: '"JetBrains Mono", monospace',
+          fontFamily: "'Space Mono', monospace",
           fontSize: '0.575rem',
-          letterSpacing: '0.2em',
+          letterSpacing: '0.22em',
           textTransform: 'uppercase',
-          color: 'rgba(13,11,9,0.55)',
-          marginBottom: '0.75rem',
+          color: 'rgba(7,7,12,0.5)',
+          marginBottom: '0.875rem',
         }}>
           {label}
         </div>
         <h3 style={{
-          fontFamily: '"Fraunces", Georgia, serif',
-          fontSize: 'clamp(1.5rem, 3vw, 2.5rem)',
+          fontFamily: "'Playfair Display', Georgia, serif",
+          fontSize: 'clamp(1.625rem, 3.5vw, 2.75rem)',
           fontWeight: 300,
-          color: '#0d0b09',
+          color: 'var(--void)',
           letterSpacing: '-0.025em',
           lineHeight: 1.1,
+          margin: 0,
         }}>
           {heading}
         </h3>
       </div>
+
+      {/* CTA button */}
       <Link
         to={to}
         style={{
           display: 'inline-flex',
           alignItems: 'center',
-          gap: '0.625rem',
-          padding: '0.875rem 2rem',
-          background: '#0d0b09',
-          color: 'var(--copper)',
-          fontFamily: '"Syne", sans-serif',
-          fontWeight: 700,
-          fontSize: '0.8rem',
-          letterSpacing: '0.08em',
+          gap: '0.75rem',
+          padding: '0.9rem 2.25rem',
+          background: 'var(--void)',
+          color: 'var(--gold)',
+          fontFamily: "'Space Mono', monospace",
+          fontWeight: 400,
+          fontSize: '0.6rem',
+          letterSpacing: '0.2em',
           textTransform: 'uppercase',
           textDecoration: 'none',
-          transition: 'background 0.25s ease',
+          transition: 'background 0.3s ease',
           flexShrink: 0,
           position: 'relative',
+          borderRadius: 0,
         }}
-        onMouseEnter={e => e.currentTarget.style.background = '#1c1917'}
-        onMouseLeave={e => e.currentTarget.style.background = '#0d0b09'}
+        onMouseEnter={e => e.currentTarget.style.background = 'var(--deep)'}
+        onMouseLeave={e => e.currentTarget.style.background = 'var(--void)'}
       >
         {buttonText}
       </Link>

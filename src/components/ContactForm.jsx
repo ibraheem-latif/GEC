@@ -4,11 +4,11 @@ import { EMAIL } from '../lib/seo'
 const FieldLabel = ({ children }) => (
   <label style={{
     display: 'block',
-    fontFamily: '"JetBrains Mono", monospace',
+    fontFamily: '"Space Mono", monospace',
     fontSize: '0.575rem',
     letterSpacing: '0.18em',
     textTransform: 'uppercase',
-    color: 'var(--copper)',
+    color: 'var(--gold)',
     marginBottom: '0.625rem',
   }}>
     {children}
@@ -82,7 +82,7 @@ const ContactForm = ({ defaultService = '' }) => {
           border: '1px solid rgba(100, 200, 100, 0.3)',
           background: 'rgba(100, 200, 100, 0.05)',
           color: '#7ccd7c',
-          fontFamily: '"Syne", sans-serif',
+          fontFamily: '"DM Sans", sans-serif',
           fontSize: '0.9rem',
           lineHeight: 1.5,
         }}>
@@ -103,7 +103,7 @@ const ContactForm = ({ defaultService = '' }) => {
               placeholder="John Smith"
               style={{ borderColor: errors.name ? 'rgba(220,80,80,0.6)' : '' }}
             />
-            {errors.name && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"Syne", sans-serif' }}>{errors.name}</p>}
+            {errors.name && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"DM Sans", sans-serif' }}>{errors.name}</p>}
           </div>
           <div>
             <FieldLabel>Email Address *</FieldLabel>
@@ -116,7 +116,7 @@ const ContactForm = ({ defaultService = '' }) => {
               placeholder="john@example.com"
               style={{ borderColor: errors.email ? 'rgba(220,80,80,0.6)' : '' }}
             />
-            {errors.email && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"Syne", sans-serif' }}>{errors.email}</p>}
+            {errors.email && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"DM Sans", sans-serif' }}>{errors.email}</p>}
           </div>
         </div>
 
@@ -132,7 +132,7 @@ const ContactForm = ({ defaultService = '' }) => {
               placeholder="+44 7XXX XXXXXX"
               style={{ borderColor: errors.phone ? 'rgba(220,80,80,0.6)' : '' }}
             />
-            {errors.phone && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"Syne", sans-serif' }}>{errors.phone}</p>}
+            {errors.phone && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"DM Sans", sans-serif' }}>{errors.phone}</p>}
           </div>
           <div>
             <FieldLabel>Service Type *</FieldLabel>
@@ -149,7 +149,7 @@ const ContactForm = ({ defaultService = '' }) => {
               <option value="executive">Executive Travel</option>
               <option value="other">Other</option>
             </select>
-            {errors.service && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"Syne", sans-serif' }}>{errors.service}</p>}
+            {errors.service && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"DM Sans", sans-serif' }}>{errors.service}</p>}
           </div>
         </div>
 
@@ -164,7 +164,7 @@ const ContactForm = ({ defaultService = '' }) => {
             className="form-field"
             style={{ borderColor: errors.date ? 'rgba(220,80,80,0.6)' : '' }}
           />
-          {errors.date && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"Syne", sans-serif' }}>{errors.date}</p>}
+          {errors.date && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"DM Sans", sans-serif' }}>{errors.date}</p>}
         </div>
 
         <div>
@@ -178,13 +178,13 @@ const ContactForm = ({ defaultService = '' }) => {
             placeholder="Tell us about your journey — pick-up location, destination, number of passengers..."
             style={{ resize: 'none', borderColor: errors.message ? 'rgba(220,80,80,0.6)' : '' }}
           />
-          {errors.message && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"Syne", sans-serif' }}>{errors.message}</p>}
+          {errors.message && <p style={{ color: '#e07070', fontSize: '0.8rem', marginTop: '0.375rem', fontFamily: '"DM Sans", sans-serif' }}>{errors.message}</p>}
         </div>
 
         <div>
           <button
             type="submit"
-            className="btn-copper"
+            className="btn-gold"
             disabled={isSubmitting}
             style={{ opacity: isSubmitting ? 0.6 : 1, cursor: isSubmitting ? 'not-allowed' : 'pointer' }}
           >

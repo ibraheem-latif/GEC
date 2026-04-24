@@ -43,65 +43,208 @@ const TOUR = [
   },
 ]
 
-function buildStyle(key) {
+// Midnight Precision palette — cinematic gold-on-void.
+// Built from scratch against MapTiler's OpenMapTiles vector schema so we sidestep
+// the full streets-v2-dark style (whose paint props include unsupported AO).
+function buildMidnightPrecisionStyle(apiKey) {
   return {
     version: 8,
+    name: 'Midnight Precision',
+    glyphs: `https://api.maptiler.com/fonts/{fontstack}/{range}.pbf?key=${apiKey}`,
     sources: {
-      city: {
-        type:        'vector',
-        tiles:       [`https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=${key}`],
-        minzoom:     0,
-        maxzoom:     14,
-        attribution: '© OpenStreetMap contributors, © MapTiler',
+      maptiler: {
+        type:     'vector',
+        url:      `https://api.maptiler.com/tiles/v3/tiles.json?key=${apiKey}`,
       },
     },
     layers: [
-      { id: 'bg', type: 'background',
-        paint: { 'background-color': '#080604' } },
+      {
+        id: 'bg',
+        type: 'background',
+        paint: { 'background-color': '#05050a' },
+      },
+      // Land base — soft void
+      {
+        id: 'landcover',
+        type: 'fill',
+        source: 'maptiler',
+        'source-layer': 'landcover',
+        paint: {
+          'fill-color': '#0a0a12',
+          'fill-opacity': 0.9,
+        },
+      },
+      {
+        id: 'landuse',
+        type: 'fill',
+        source: 'maptiler',
+        'source-layer': 'landuse',
+        paint: {
+          'fill-color': '#0b0b14',
+          'fill-opacity': 0.85,
+        },
+      },
+      {
+        id: 'park',
+        type: 'fill',
+        source: 'maptiler',
+        'source-layer': 'park',
+        paint: {
+          'fill-color': '#0c0f14',
+          'fill-opacity': 0.8,
+        },
+      },
+      // Water — deep cinematic blue, hairline gold edge on rivers
+      {
+        id: 'water',
+        type: 'fill',
+        source: 'maptiler',
+        'source-layer': 'water',
+        paint: {
+          'fill-color': '#0d2a4a',
+          'fill-opacity': 1,
+        },
+      },
+      {
+        id: 'waterway',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'waterway',
+        paint: {
+          'line-color': '#1d4976',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.6, 16, 1.6],
+        },
+      },
+      // Admin / boundaries — faint gold
+      {
+        id: 'admin',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'boundary',
+        paint: {
+          'line-color': 'rgba(196,165,90,0.18)',
+          'line-width': 0.5,
+        },
+      },
 
-      { id: 'landcover', type: 'fill',
-        source: 'city', 'source-layer': 'landcover',
-        paint: { 'fill-color': '#0c0804' } },
+      // Road glow — wide, blurred halo under arterials
+      {
+        id: 'road-glow',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['in', 'class', 'motorway', 'trunk', 'primary', 'secondary', 'tertiary'],
+        paint: {
+          'line-color': 'rgba(212,184,106,0.28)',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 2, 14, 5, 16, 10],
+          'line-blur': 5,
+        },
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+      },
+      // Minor roads — dim copper
+      {
+        id: 'road-minor',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['in', 'class', 'minor', 'service', 'path', 'track', 'pedestrian', 'footway', 'cycleway'],
+        paint: {
+          'line-color': 'rgba(138,105,48,0.55)',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 13, 0.2, 16, 0.9, 18, 2],
+        },
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+      },
+      // Residential — warm copper
+      {
+        id: 'road-residential',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['==', 'class', 'residential'],
+        paint: {
+          'line-color': 'rgba(168,137,67,0.75)',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.5, 16, 1.8, 18, 3.5],
+        },
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+      },
+      // Tertiary / secondary — solid gold, thicker
+      {
+        id: 'road-secondary',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['in', 'class', 'tertiary', 'secondary'],
+        paint: {
+          'line-color': '#b89548',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.5, 14, 2.2, 16, 4, 18, 6],
+        },
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+      },
+      // Primary arteries — bright gold
+      {
+        id: 'road-primary',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['==', 'class', 'primary'],
+        paint: {
+          'line-color': '#c4a55a',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 10, 0.8, 14, 2.8, 16, 5, 18, 8],
+        },
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+      },
+      // Motorway / trunk — brightest gold
+      {
+        id: 'road-motorway',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['in', 'class', 'motorway', 'trunk'],
+        paint: {
+          'line-color': '#d4b86a',
+          'line-width': ['interpolate', ['linear'], ['zoom'], 8, 0.6, 12, 2.5, 14, 4.5, 16, 7, 18, 11],
+        },
+        layout: { 'line-join': 'round', 'line-cap': 'round' },
+      },
+      // Rail — thin gold hairline
+      {
+        id: 'rail',
+        type: 'line',
+        source: 'maptiler',
+        'source-layer': 'transportation',
+        filter: ['==', 'class', 'rail'],
+        paint: {
+          'line-color': 'rgba(180,160,110,0.4)',
+          'line-width': 0.6,
+        },
+      },
 
-      { id: 'water', type: 'fill',
-        source: 'city', 'source-layer': 'water',
-        paint: { 'fill-color': '#06080c' } },
-
-      { id: 'road-minor', type: 'line',
-        source: 'city', 'source-layer': 'transportation',
-        filter: ['in', 'class', 'minor', 'service', 'path', 'track'],
-        paint: { 'line-color': '#1c0e05',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.4, 16, 1.0] } },
-
-      { id: 'road-major', type: 'line',
-        source: 'city', 'source-layer': 'transportation',
-        filter: ['in', 'class', 'primary', 'secondary', 'tertiary', 'trunk', 'motorway', 'residential'],
-        paint: { 'line-color': '#2e1808',
-          'line-width': ['interpolate', ['linear'], ['zoom'], 12, 0.7, 16, 2.2] } },
-
-      { id: 'building-base', type: 'fill',
-        source: 'city', 'source-layer': 'building',
-        paint: { 'fill-color': '#140902', 'fill-opacity': 0.9 } },
-
-      { id: 'buildings-3d', type: 'fill-extrusion',
-        source: 'city', 'source-layer': 'building',
+      // 3D Buildings — gradient from void (ground) to bright gold (crown)
+      // Tuned for Glasgow's low-rise (~5–30m) skyline.
+      {
+        id: 'buildings-3d',
+        type: 'fill-extrusion',
+        source: 'maptiler',
+        'source-layer': 'building',
         minzoom: 12,
         paint: {
           'fill-extrusion-color': [
             'interpolate', ['linear'],
             ['coalesce', ['get', 'render_height'], ['get', 'height'], 6],
-            0,   '#1a0c04',  10,  '#2e1608',
-            28,  '#4e2612',  55,  '#743e1a',
-            100, '#a85e22',  160, '#c87328',
-            280, '#e08830',
+            0,   '#1a1812',
+            5,   '#3a2f1c',
+            12,  '#5d4d26',
+            22,  '#8f7238',
+            40,  '#b8994b',
+            80,  '#d4b86a',
+            160, '#ead18a',
           ],
-          'fill-extrusion-height':            ['coalesce', ['get', 'render_height'],     ['get', 'height'],     6],
+          'fill-extrusion-height':            ['coalesce', ['get', 'render_height'], ['get', 'height'], 6],
           'fill-extrusion-base':              ['coalesce', ['get', 'render_min_height'], ['get', 'min_height'], 0],
-          'fill-extrusion-opacity':           0.93,
+          'fill-extrusion-opacity':           0.95,
           'fill-extrusion-vertical-gradient': true,
         },
       },
-
     ],
   }
 }
@@ -115,7 +258,7 @@ export default function GlasgowMap3D({ className = '' }) {
     const first = TOUR[0]
     const map = new maplibregl.Map({
       container:          containerRef.current,
-      style:              buildStyle(API_KEY),
+      style:              buildMidnightPrecisionStyle(API_KEY),
       center:             first.center,
       zoom:               first.zoom,
       pitch:              first.pitch,
@@ -124,6 +267,7 @@ export default function GlasgowMap3D({ className = '' }) {
       interactive:        false,
       attributionControl: false,
     })
+    if (import.meta.env.DEV) window.__gmap = map
 
     const timers = []
     let idx = 0

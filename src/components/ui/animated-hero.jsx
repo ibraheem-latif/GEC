@@ -3,8 +3,6 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { Spotlight } from './spotlight'
 
-// Primary: actual Glasgow city map (requires VITE_MAPTILER_KEY)
-// Fallback: procedural 3D landscape
 const GlasgowMap3D        = lazy(() => import('./glasgow-map-3d'))
 const ScotlandLandscape3D = lazy(() => import('./scotland-landscape-3d'))
 
@@ -48,17 +46,17 @@ function AnimatedHero() {
         minHeight: '100vh',
         position: 'relative',
         overflow: 'hidden',
-        background: '#080604',
+        background: 'var(--void)',
       }}
     >
-      {/* ── Gradient veil ── */}
+      {/* ── Gradient veil — darkens the left so copy reads, fades to reveal the map on the right ── */}
       <div
         style={{
           position: 'absolute',
           inset: 0,
           zIndex: 1,
           background:
-            'linear-gradient(105deg, #080604 0%, #080604 28%, rgba(8,6,4,0.82) 48%, rgba(8,6,4,0.25) 68%, transparent 100%)',
+            'linear-gradient(105deg, #07070C 0%, #07070C 25%, rgba(7,7,12,0.85) 48%, rgba(7,7,12,0.25) 70%, transparent 100%)',
           pointerEvents: 'none',
         }}
       />
@@ -71,23 +69,23 @@ function AnimatedHero() {
           left: 0,
           right: 0,
           height: '220px',
-          background: 'linear-gradient(to top, #080604 0%, transparent 100%)',
+          background: 'linear-gradient(to top, #07070C 0%, transparent 100%)',
           zIndex: 1,
           pointerEvents: 'none',
         }}
       />
 
-      {/* ── Copper spotlight — from top-left ── */}
+      {/* ── Gold spotlight — from top-left ── */}
       <Spotlight
         className="-top-40 -left-10 md:left-16 md:-top-20"
-        fill="rgba(200, 115, 40, 0.55)"
+        fill="rgba(196, 165, 90, 0.4)"
       />
 
-      {/* ── Hero background: real Glasgow map or procedural 3D landscape ── */}
+      {/* ── Cinematic Glasgow/Scotland map tour — full hero background ── */}
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ duration: 2, ease: 'easeOut', delay: 0.4 }}
+        transition={{ duration: 2.2, ease: 'easeOut', delay: 0.5 }}
         style={{ position: 'absolute', inset: 0, zIndex: 0 }}
       >
         <Suspense fallback={null}>
@@ -98,7 +96,7 @@ function AnimatedHero() {
         </Suspense>
       </motion.div>
 
-      {/* ── Decorative vertical copper rule ── */}
+      {/* ── Decorative vertical gold rule ── */}
       <div
         style={{
           position: 'absolute',
@@ -106,8 +104,8 @@ function AnimatedHero() {
           top: '22%',
           bottom: '22%',
           width: '1px',
-          background: 'linear-gradient(to bottom, transparent, #c87328, transparent)',
-          opacity: 0.45,
+          background: 'linear-gradient(to bottom, transparent, var(--gold), transparent)',
+          opacity: 0.35,
           zIndex: 3,
           pointerEvents: 'none',
         }}
@@ -118,10 +116,8 @@ function AnimatedHero() {
         style={{
           position: 'relative',
           zIndex: 2,
-          position: 'relative',
-          zIndex: 2,
           minHeight: '100vh',
-          maxWidth: '640px',
+          maxWidth: '660px',
           padding:
             'clamp(5.5rem, 10vh, 9rem) clamp(2rem, 7vw, 6rem) clamp(3.5rem, 6vh, 5.5rem)',
           display: 'flex',
@@ -129,15 +125,18 @@ function AnimatedHero() {
           justifyContent: 'center',
         }}
       >
-        {/* Label */}
+        {/* Eyebrow label */}
         <motion.div
           className="label"
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, ease: 'easeOut' }}
-          style={{ marginBottom: 'clamp(1rem, 2vh, 1.5rem)' }}
+          style={{
+            color: 'var(--gold)',
+            marginBottom: '2.5rem',
+          }}
         >
-          Est. 2014 · Glasgow · Scotland
+          EST. 2014 · GLASGOW · SCOTLAND
         </motion.div>
 
         {/* Animated heading */}
@@ -148,17 +147,18 @@ function AnimatedHero() {
         >
           <h1
             style={{
-              fontFamily: '"Fraunces", Georgia, serif',
-              fontSize: 'clamp(2rem, 4.5vw, 4rem)',
+              fontFamily: '"Playfair Display", Georgia, serif',
+              fontSize: 'clamp(3.5rem, 6.5vw, 5.5rem)',
               fontWeight: 300,
-              lineHeight: 1,
-              letterSpacing: '-0.025em',
-              color: '#e5ddd0',
+              lineHeight: 1.0,
+              letterSpacing: '-0.02em',
+              color: 'var(--white)',
               marginBottom: 'clamp(0.75rem, 1.5vh, 1.25rem)',
             }}
           >
             <span style={{ display: 'block' }}>Your</span>
 
+            {/* Animated adjective — gold italic */}
             <span
               style={{
                 display: 'block',
@@ -174,8 +174,9 @@ function AnimatedHero() {
                     position: 'absolute',
                     left: 0,
                     top: 0,
-                    color: '#c87328',
+                    color: 'var(--gold)',
                     fontStyle: 'italic',
+                    fontFamily: '"Playfair Display", Georgia, serif',
                     whiteSpace: 'nowrap',
                   }}
                   initial={{ opacity: 0 }}
@@ -187,12 +188,24 @@ function AnimatedHero() {
               ))}
             </span>
 
-            <span style={{ display: 'block' }}>
-              <em>chauffeur</em>
-            </span>
-            <span style={{ display: 'block' }}>service.</span>
+            <span style={{ display: 'block' }}>chauffeur</span>
+            <span style={{ display: 'block', fontStyle: 'italic' }}>service.</span>
           </h1>
         </motion.div>
+
+        {/* Full-width hairline divider */}
+        <motion.div
+          initial={{ opacity: 0, scaleX: 0 }}
+          animate={{ opacity: 1, scaleX: 1 }}
+          transition={{ duration: 0.9, ease: 'easeOut', delay: 0.28 }}
+          style={{
+            width: '100%',
+            height: '1px',
+            background: 'var(--line-strong)',
+            marginBottom: 'clamp(1.25rem, 2.5vh, 2rem)',
+            transformOrigin: 'left',
+          }}
+        />
 
         {/* Subtitle */}
         <motion.p
@@ -200,13 +213,13 @@ function AnimatedHero() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, ease: 'easeOut', delay: 0.35 }}
           style={{
-            fontFamily: '"Syne", sans-serif',
-            fontSize: 'clamp(0.9rem, 1.4vw, 1rem)',
+            fontFamily: '"DM Sans", sans-serif',
+            fontSize: '1rem',
             fontWeight: 400,
-            lineHeight: 1.75,
-            color: 'rgba(229,221,208,0.62)',
-            maxWidth: '40ch',
-            marginBottom: 'clamp(1.25rem, 2.5vh, 2rem)',
+            lineHeight: 1.8,
+            color: 'var(--white-dim)',
+            maxWidth: '44ch',
+            marginBottom: '2.5rem',
           }}
         >
           From Glasgow Airport to the Highlands — premium transport in our
@@ -220,11 +233,11 @@ function AnimatedHero() {
           transition={{ duration: 0.8, ease: 'easeOut', delay: 0.5 }}
           style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
         >
-          <Link to="/contact" className="btn-copper">
-            Book Your Ride
+          <Link to="/contact" className="btn-gold">
+            RESERVE YOUR JOURNEY
           </Link>
-          <Link to="/fleet" className="btn-outline">
-            View Fleet
+          <Link to="/fleet" className="btn-ghost">
+            VIEW FLEET
           </Link>
         </motion.div>
 
@@ -234,9 +247,9 @@ function AnimatedHero() {
           animate={{ opacity: 1 }}
           transition={{ duration: 1.2, delay: 0.8 }}
           style={{
-            marginTop: 'clamp(1.25rem, 3vh, 2.5rem)',
-            paddingTop: 'clamp(0.75rem, 1.5vh, 1.25rem)',
-            borderTop: '1px solid rgba(255,255,255,0.07)',
+            marginTop: '3rem',
+            paddingTop: '1.5rem',
+            borderTop: '1px solid var(--line)',
             display: 'flex',
             gap: 'clamp(1.5rem, 4vw, 3rem)',
             flexWrap: 'wrap',
@@ -246,17 +259,24 @@ function AnimatedHero() {
             <div key={i}>
               <div
                 style={{
-                  fontFamily: '"Fraunces", Georgia, serif',
-                  fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)',
-                  fontWeight: 600,
-                  color: '#c87328',
+                  fontFamily: '"Playfair Display", Georgia, serif',
+                  fontSize: 'clamp(2rem, 3vw, 2.75rem)',
+                  fontWeight: 500,
+                  color: 'var(--gold)',
                   lineHeight: 1,
                   marginBottom: '0.35rem',
                 }}
               >
                 {stat.number}
               </div>
-              <div className="label" style={{ fontSize: '0.55rem' }}>
+              <div
+                className="label"
+                style={{
+                  fontSize: '0.5rem',
+                  letterSpacing: '0.2em',
+                  color: 'var(--white-dim)',
+                }}
+              >
                 {stat.label}
               </div>
             </div>

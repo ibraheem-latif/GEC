@@ -18,28 +18,31 @@ const AirportTransfersPage = () => {
     <>
       <SEOHead title={seo.title} description={seo.description} canonical={seo.canonical} />
 
-      <section style={{ background: 'var(--surface)', paddingTop: '7rem' }}>
+      {/* Hero */}
+      <section style={{ background: 'var(--deep)', paddingTop: '7rem' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
           <div className="label" style={{ marginBottom: '1.5rem' }}>Airport Transfers</div>
           <h1 style={{
-            fontFamily: '"Fraunces", Georgia, serif',
-            fontSize: 'clamp(2.5rem, 6vw, 5rem)',
+            fontFamily: '"Playfair Display", Georgia, serif',
+            fontSize: 'clamp(2.75rem, 6vw, 5.5rem)',
             fontWeight: 300,
-            lineHeight: 1.05,
+            lineHeight: 1.02,
             letterSpacing: '-0.025em',
-            color: 'var(--cream)',
+            color: 'var(--white)',
             marginBottom: '1.5rem',
             maxWidth: '18ch',
           }}>
-            Airport Transfers <em style={{ color: 'var(--copper)' }}>Glasgow</em>
+            Airport Transfers{' '}
+            <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>Glasgow</em>
           </h1>
-          <p style={{ color: 'var(--cream-dim)', fontSize: '1rem', lineHeight: 1.75, maxWidth: '52ch' }}>
+          <p style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--white-dim)', fontSize: '1rem', lineHeight: 1.8, maxWidth: '52ch' }}>
             From Glasgow, Edinburgh, and Prestwick airports — we track your flight and meet you at arrivals. No stress, no waiting. Just a calm, professional driver ready when you land.
           </p>
         </div>
       </section>
 
-      <section style={{ background: 'var(--bg)' }}>
+      {/* Features — image left, list right */}
+      <section style={{ background: 'var(--void)' }}>
         <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
           <div
             style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '4rem', alignItems: 'center' }}
@@ -49,7 +52,7 @@ const AirportTransfersPage = () => {
               <img
                 src={planeImage}
                 alt="Airport transfer service"
-                style={{ width: '100%', height: '360px', objectFit: 'cover' }}
+                style={{ width: '100%', height: '420px', objectFit: 'cover' }}
               />
             </div>
             <div>
@@ -58,16 +61,16 @@ const AirportTransfersPage = () => {
                 {features.map(f => (
                   <div key={f.num} style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
                     <span style={{
-                      fontFamily: '"JetBrains Mono", monospace',
+                      fontFamily: '"Space Mono", monospace',
                       fontSize: '0.575rem',
                       letterSpacing: '0.15em',
-                      color: 'var(--copper)',
+                      color: 'var(--gold)',
                       paddingTop: '0.25rem',
                       flexShrink: 0,
                     }}>
                       {f.num}
                     </span>
-                    <span style={{ color: 'var(--cream)', fontSize: '0.9375rem', lineHeight: 1.6 }}>{f.text}</span>
+                    <span style={{ fontFamily: '"DM Sans", sans-serif', color: 'var(--white)', fontSize: '0.9375rem', lineHeight: 1.6 }}>{f.text}</span>
                   </div>
                 ))}
               </div>
@@ -76,18 +79,20 @@ const AirportTransfersPage = () => {
         </div>
       </section>
 
-      <section style={{ background: 'var(--surface)' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(1.25rem, 2.5vh, 2rem) clamp(1.5rem, 5vw, 5rem)' }}>
-          <div style={{ marginBottom: '1.25rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--border)' }}>
+      {/* Booking form */}
+      <section style={{ background: 'var(--deep)' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', padding: 'clamp(3rem, 6vh, 5rem) clamp(1.5rem, 5vw, 5rem)' }}>
+          <div style={{ marginBottom: '2.5rem', paddingBottom: '1.25rem', borderBottom: '1px solid var(--line)' }}>
             <div className="label" style={{ marginBottom: '1rem' }}>Book Your Transfer</div>
             <h2 style={{
-              fontFamily: '"Fraunces", Georgia, serif',
+              fontFamily: '"Playfair Display", Georgia, serif',
               fontSize: 'clamp(2rem, 4vw, 3rem)',
               fontWeight: 300,
               letterSpacing: '-0.02em',
-              color: 'var(--cream)',
+              color: 'var(--white)',
             }}>
-              Ready to book?<br /><em>We respond within the hour.</em>
+              Ready to book?<br />
+              <em style={{ color: 'var(--gold)', fontStyle: 'italic' }}>We respond within the hour.</em>
             </h2>
           </div>
           <div style={{ maxWidth: '720px' }}>
