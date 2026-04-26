@@ -3,6 +3,15 @@ main = ".open-next/worker.js"
 compatibility_date = "2025-03-01"
 compatibility_flags = ["nodejs_compat"]
 
+# Required runtime secrets (set via `wrangler secret put <NAME>`):
+#   RESEND_API_KEY  — transactional email API key (https://resend.com)
+# Verify with: `wrangler secret list`
+#
+# Required build-time vars (set in `.env` locally — must be present when
+# running `opennextjs-cloudflare build`; NEXT_PUBLIC_* vars cannot be set
+# in the Cloudflare dashboard):
+#   NEXT_PUBLIC_MAPTILER_KEY  — MapTiler key for hero/route maps
+
 [vars]
 TO_EMAIL = "bookings@gec.limo"
 
