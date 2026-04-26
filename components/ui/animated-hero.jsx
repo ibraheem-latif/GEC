@@ -11,7 +11,7 @@ const ScotlandLandscape3D = dynamic(() => import('./scotland-landscape-3d'), { s
 
 const HAS_MAP_KEY = !!process.env.NEXT_PUBLIC_MAPTILER_KEY
 
-const TITLES = ['professional', 'punctual', 'discreet', 'comfortable', 'luxurious']
+const TITLES = ['professional', 'punctual', 'comfortable', 'luxurious']
 
 const STATS = [
   { number: '10+', label: 'Years Experience' },

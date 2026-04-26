@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import ContactForm from '@/components/ContactForm'
+import BookingWizard from '@/components/BookingWizard'
 import JsonLd from '@/components/JsonLd'
 import {
   buildMetadata,
@@ -130,7 +130,7 @@ export default function CorporateChauffeursPage() {
             </h2>
           </div>
           <div style={{ maxWidth: '720px' }}>
-            <ContactForm defaultService="executive" />
+            <BookingWizard defaultService="p2p" />
           </div>
         </div>
       </section>

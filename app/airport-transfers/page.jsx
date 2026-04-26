@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import ContactForm from '@/components/ContactForm'
+import BookingWizard from '@/components/BookingWizard'
 import JsonLd from '@/components/JsonLd'
 import {
   buildMetadata,
@@ -118,7 +118,7 @@ export default function AirportTransfersPage() {
             </h2>
           </div>
           <div style={{ maxWidth: '720px' }}>
-            <ContactForm defaultService="airport" />
+            <BookingWizard defaultService="airport" />
           </div>
         </div>
       </section>

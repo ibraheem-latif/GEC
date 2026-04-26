@@ -2,7 +2,7 @@ const FROM_ADDRESS = 'Glasgow Executive Chauffeurs <bookings@gec.limo>'
 const DEFAULT_TO = 'bookings@gec.limo'
 
 function escapeHtml(str) {
-  return String(str)
+  return String(str ?? '')
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -10,12 +10,108 @@ function escapeHtml(str) {
     .replace(/'/g, '&#39;')
 }
 
+function row(label, value) {
+  if (value == null || value === '') return ''
+  return `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;vertical-align:top;white-space:nowrap;">${escapeHtml(label)}</td><td style="padding:6px 0;color:#111;font-size:14px;">${escapeHtml(value)}</td></tr>`
+}
+
+const SERVICE_LABEL = {
+  airport: 'Airport Transfer',
+  p2p: 'Point-to-Point',
+  hourly: 'By the Hour',
+  tour: 'Scotland Tour',
+}
+
+const AIRPORT_LABEL = {
+  GLA: 'Glasgow Airport (GLA)',
+  EDI: 'Edinburgh Airport (EDI)',
+  PIK: 'Prestwick Airport (PIK)',
+}
+
+const TOUR_LABEL = {
+  lochlomond: 'Loch Lomond & The Trossachs',
+  highlands: 'Highlands & Glencoe',
+  edinburgh: 'Edinburgh Day Tour',
+  standrews: 'St Andrews & East Neuk',
+  stirling: 'Stirling & Loch Katrine',
+  whisky: 'Whisky Trail · Speyside',
+  custom: 'Custom itinerary',
+}
+
+function formatWhen(b) {
+  if (b.pickupMode === 'now') return 'ASAP — dispatch nearest driver'
+  if (!b.date) return ''
+  const d = new Date(b.date + 'T00:00:00')
+  const dateStr = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+  const verb = b.timeMode === 'arrive' ? 'Arrive by' : 'Pickup at'
+  return `${verb} · ${dateStr} · ${b.time || ''}`
+}
+
+function buildBookingTable(b) {
+  if (!b) return ''
+  const rows = []
+
+  if (b.vehicle) rows.push(row('Vehicle', `${b.vehicle.label} · ${b.vehicle.model}`))
+  rows.push(row('Service', SERVICE_LABEL[b.service] || b.service))
+
+  if (b.service === 'airport') {
+    const airport = AIRPORT_LABEL[b.airport] || b.airport
+    const other = b.otherLocation?.name || ''
+    if (b.airportDirection === 'from') {
+      rows.push(row('Pickup', airport))
+      if (other) rows.push(row('Drop-off', other))
+    } else {
+      if (other) rows.push(row('Pickup', other))
+      rows.push(row('Drop-off', airport))
+    }
+    if (b.flightNumber) rows.push(row('Flight', b.flightNumber))
+  } else if (b.service === 'tour') {
+    rows.push(row('Tour', TOUR_LABEL[b.tour] || b.tour))
+    if (b.pickup?.name) rows.push(row('Pickup', b.pickup.name))
+    if (b.tourNotes) rows.push(row('Itinerary', b.tourNotes))
+  } else if (b.service === 'p2p') {
+    if (b.pickup?.name) rows.push(row('Pickup', b.pickup.name))
+    if (b.dropoff?.name) rows.push(row('Drop-off', b.dropoff.name))
+  } else if (b.service === 'hourly') {
+    rows.push(row('Duration', `${b.hours} hrs`))
+    if (b.pickup?.name) rows.push(row('Pickup', b.pickup.name))
+  }
+
+  const when = formatWhen(b)
+  if (when) rows.push(row('When', when))
+
+  if (b.quote) rows.push(row('Estimate', `£${b.quote.low}–£${b.quote.high}`))
+  if (b.notes) rows.push(row('Customer notes', b.notes))
+
+  return `<table style="border-collapse:collapse;margin:16px 0;">${rows.join('')}</table>`
+}
+
+function buildSubject(name, booking) {
+  if (!booking) return `New Booking Request from ${name}`
+  const veh = booking.vehicle?.label || ''
+  let route = ''
+  if (booking.service === 'airport') {
+    const apt = booking.airport || ''
+    const other = booking.otherLocation?.short || 'address'
+    route = booking.airportDirection === 'from' ? `${apt} → ${other}` : `${other} → ${apt}`
+  } else if (booking.service === 'p2p') {
+    route = `${booking.pickup?.short || ''} → ${booking.dropoff?.short || ''}`
+  } else if (booking.service === 'tour') {
+    route = TOUR_LABEL[booking.tour] || 'Tour'
+  } else if (booking.service === 'hourly') {
+    route = `${booking.hours}hr · ${booking.pickup?.short || ''}`
+  }
+  const price = booking.quote ? ` · £${booking.quote.low}–£${booking.quote.high}` : ''
+  return `Booking · ${name}${veh ? ` · ${veh}` : ''}${route ? ` · ${route}` : ''}${price}`
+}
+
 export async function POST(request) {
   try {
-    const { name, email, phone, service, date, message } = await request.json()
+    const body = await request.json()
+    const { name, email, phone, service, date, message, booking } = body
 
     if (!name || !email || !phone || !service || !date || !message) {
-      return Response.json({ error: 'All fields are required' }, { status: 400 })
+      return Response.json({ error: 'Please fill in all required fields' }, { status: 400 })
     }
 
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
@@ -31,6 +127,23 @@ export async function POST(request) {
     }
 
     const safeMessage = escapeHtml(message).replace(/\n/g, '<br>')
+    const bookingTable = buildBookingTable(booking)
+    const subjectLine = escapeHtml(buildSubject(name, booking))
+
+    const html = `
+      <div style="font-family:-apple-system,BlinkMacSystemFont,sans-serif;max-width:560px;">
+        <h2 style="font-family:Georgia,serif;color:#0E0E16;font-weight:300;font-size:24px;margin:0 0 4px;">New booking request</h2>
+        <p style="color:#666;font-size:13px;margin:0 0 16px;">via gec.limo</p>
+        <table style="border-collapse:collapse;">
+          ${row('From', name)}
+          ${row('Phone', phone)}
+          ${row('Email', email)}
+        </table>
+        ${bookingTable}
+        ${booking ? '' : `<h3 style="font-family:Georgia,serif;font-weight:400;font-size:16px;color:#0E0E16;">Message</h3><p style="font-size:14px;color:#111;line-height:1.5;">${safeMessage}</p>`}
+      </div>
+    `
+
     const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
@@ -41,19 +154,8 @@ export async function POST(request) {
         from: FROM_ADDRESS,
         to: [TO_EMAIL],
         reply_to: email,
-        subject: `New Booking Request from ${escapeHtml(name)}`,
-        html: `
-          <h2>New Chauffeur Booking Request</h2>
-          <p><strong>From:</strong> ${escapeHtml(name)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
-          <p><strong>Service:</strong> ${escapeHtml(service)}</p>
-          <p><strong>Preferred Date:</strong> ${escapeHtml(date)}</p>
-          <h3>Message:</h3>
-          <p>${safeMessage}</p>
-          <hr>
-          <p><small>Sent from Glasgow Executive Chauffeurs website</small></p>
-        `,
+        subject: subjectLine,
+        html,
       }),
     })
 

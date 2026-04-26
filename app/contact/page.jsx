@@ -1,4 +1,4 @@
-import ContactForm from '@/components/ContactForm'
+import BookingWizard from '@/components/BookingWizard'
 import ContactInfo from '@/components/ContactInfo'
 import JsonLd from '@/components/JsonLd'
 import {
@@ -42,7 +42,7 @@ export default function ContactPage() {
             style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 'clamp(2rem, 6vw, 5rem)', alignItems: 'start' }}
             className="max-md:!grid-cols-1"
           >
-            <ContactForm />
+            <BookingWizard />
             <ContactInfo />
           </div>
         </div>

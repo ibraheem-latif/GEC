@@ -1,5 +1,5 @@
 import Image from 'next/image'
-import ContactForm from '@/components/ContactForm'
+import BookingWizard from '@/components/BookingWizard'
 import JsonLd from '@/components/JsonLd'
 import {
   buildMetadata,
@@ -141,7 +141,7 @@ export default function ScotlandToursPage() {
             </h2>
           </div>
           <div style={{ maxWidth: '720px' }}>
-            <ContactForm defaultService="tour" />
+            <BookingWizard defaultService="tour" />
           </div>
         </div>
       </section>
