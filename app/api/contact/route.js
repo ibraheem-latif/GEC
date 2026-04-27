@@ -15,6 +15,14 @@ function row(label, value) {
   return `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;vertical-align:top;white-space:nowrap;">${escapeHtml(label)}</td><td style="padding:6px 0;color:#111;font-size:14px;">${escapeHtml(value)}</td></tr>`
 }
 
+function navRow(label, place) {
+  if (!place?.coords) return ''
+  const [lng, lat] = place.coords
+  const url = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`
+  const display = `${lat.toFixed(5)}, ${lng.toFixed(5)}`
+  return `<tr><td style="padding:6px 12px 6px 0;color:#888;font-size:12px;letter-spacing:0.08em;text-transform:uppercase;vertical-align:top;white-space:nowrap;">${escapeHtml(label)}</td><td style="padding:6px 0;font-size:13px;"><a href="${url}" style="color:#1a73e8;text-decoration:none;">Open in Google Maps</a> <span style="color:#888;">· ${display}</span></td></tr>`
+}
+
 const SERVICE_LABEL = {
   airport: 'Airport Transfer',
   p2p: 'Point-to-Point',
@@ -38,13 +46,38 @@ const TOUR_LABEL = {
   custom: 'Custom itinerary',
 }
 
-function formatWhen(b) {
-  if (b.pickupMode === 'now') return 'ASAP — dispatch nearest driver'
-  if (!b.date) return ''
+const PICKUP_BUFFER_MIN = 15
+
+function formatHHMM(date) {
+  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
+}
+
+function computePickupTime(date, time, durationSeconds) {
+  if (!date || !time || !durationSeconds) return null
+  const arrival = new Date(`${date}T${time}`)
+  if (Number.isNaN(arrival.getTime())) return null
+  return new Date(arrival.getTime() - (durationSeconds + PICKUP_BUFFER_MIN * 60) * 1000)
+}
+
+function formatWhenDate(b) {
   const d = new Date(b.date + 'T00:00:00')
-  const dateStr = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
-  const verb = b.timeMode === 'arrive' ? 'Arrive by' : 'Pickup at'
-  return `${verb} · ${dateStr} · ${b.time || ''}`
+  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
+}
+
+function buildScheduleRows(b) {
+  if (b.pickupMode === 'now') return [row('When', 'ASAP — dispatch nearest driver')]
+  if (!b.date) return []
+  const dateStr = formatWhenDate(b)
+  if (b.timeMode !== 'arrive') {
+    return [row('Pickup at', `${dateStr} · ${b.time || ''}`)]
+  }
+  const rows = [row('Arrive by', `${dateStr} · ${b.time || ''} at drop-off`)]
+  const pickup = computePickupTime(b.date, b.time, b.routeDurationSeconds)
+  if (pickup) {
+    const drive = Math.round(b.routeDurationSeconds / 60)
+    rows.push(row('Driver pickup', `${formatHHMM(pickup)} · ${drive} min drive + ${PICKUP_BUFFER_MIN} min buffer`))
+  }
+  return rows
 }
 
 function buildBookingTable(b) {
@@ -57,28 +90,40 @@ function buildBookingTable(b) {
   if (b.service === 'airport') {
     const airport = AIRPORT_LABEL[b.airport] || b.airport
     const other = b.otherLocation?.name || ''
+    const otherDetails = b.otherLocation?.details || ''
     if (b.airportDirection === 'from') {
       rows.push(row('Pickup', airport))
       if (other) rows.push(row('Drop-off', other))
+      if (otherDetails) rows.push(row('Drop-off details', otherDetails))
+      rows.push(navRow('Drop-off nav', b.otherLocation))
     } else {
       if (other) rows.push(row('Pickup', other))
+      if (otherDetails) rows.push(row('Pickup details', otherDetails))
+      rows.push(navRow('Pickup nav', b.otherLocation))
       rows.push(row('Drop-off', airport))
     }
     if (b.flightNumber) rows.push(row('Flight', b.flightNumber))
   } else if (b.service === 'tour') {
     rows.push(row('Tour', TOUR_LABEL[b.tour] || b.tour))
     if (b.pickup?.name) rows.push(row('Pickup', b.pickup.name))
+    if (b.pickup?.details) rows.push(row('Pickup details', b.pickup.details))
+    rows.push(navRow('Pickup nav', b.pickup))
     if (b.tourNotes) rows.push(row('Itinerary', b.tourNotes))
   } else if (b.service === 'p2p') {
     if (b.pickup?.name) rows.push(row('Pickup', b.pickup.name))
+    if (b.pickup?.details) rows.push(row('Pickup details', b.pickup.details))
+    rows.push(navRow('Pickup nav', b.pickup))
     if (b.dropoff?.name) rows.push(row('Drop-off', b.dropoff.name))
+    if (b.dropoff?.details) rows.push(row('Drop-off details', b.dropoff.details))
+    rows.push(navRow('Drop-off nav', b.dropoff))
   } else if (b.service === 'hourly') {
     rows.push(row('Duration', `${b.hours} hrs`))
     if (b.pickup?.name) rows.push(row('Pickup', b.pickup.name))
+    if (b.pickup?.details) rows.push(row('Pickup details', b.pickup.details))
+    rows.push(navRow('Pickup nav', b.pickup))
   }
 
-  const when = formatWhen(b)
-  if (when) rows.push(row('When', when))
+  rows.push(...buildScheduleRows(b))
 
   if (b.quote) rows.push(row('Estimate', `£${b.quote.low}–£${b.quote.high}`))
   if (b.notes) rows.push(row('Customer notes', b.notes))

@@ -502,6 +502,74 @@ input[type="time"].form-field {
   margin-top: -8px;
 }
 
+/* Trip map (booking wizard step 2: shared draggable A/B pins) */
+.trip-map-wrap {
+  position: relative;
+  margin-top: 0.5rem;
+  border: 1px solid var(--line-strong);
+  background: var(--deep);
+  overflow: hidden;
+}
+.trip-map {
+  width: 100%;
+  height: clamp(240px, 36vh, 360px);
+}
+.trip-map-exit {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 0.45rem 0.75rem;
+  background: rgba(7, 7, 12, 0.85);
+  color: var(--ivory);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: background 0.15s ease;
+}
+.trip-map-exit:hover { background: rgba(7, 7, 12, 0.95); }
+.trip-map-hint {
+  padding: 0.55rem 0.75rem;
+  border-top: 1px solid var(--line);
+  color: var(--white-dim);
+  font-size: 0.6rem;
+  letter-spacing: 0.16em;
+  background: rgba(7,7,12,0.6);
+}
+.trip-map-pin {
+  width: 28px;
+  height: 36px;
+  position: relative;
+  cursor: grab;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.55));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.trip-map-pin::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--pin-color, #C4A55A);
+  clip-path: path('M14 0 C 6 0, 0 6, 0 14 C 0 22, 14 36, 14 36 C 14 36, 28 22, 28 14 C 28 6, 22 0, 14 0 Z');
+}
+.trip-map-pin span {
+  position: relative;
+  z-index: 1;
+  color: var(--void);
+  font-family: var(--font-space-mono), monospace;
+  font-size: 0.7rem;
+  font-weight: 700;
+  margin-top: -8px;
+}
+.trip-map-pin:active { cursor: grabbing; }
+
 /* MapLibre control tweaks: dark scheme */
 .maplibregl-ctrl-group {
   background: rgba(7, 7, 12, 0.85) !important;

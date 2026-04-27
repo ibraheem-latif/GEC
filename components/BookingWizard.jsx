@@ -5,9 +5,11 @@ import dynamic from 'next/dynamic'
 import { EMAIL } from '@/lib/seo'
 import { searchPlaces, reverseGeocode, getCurrentPosition } from '@/lib/geocode'
 import { TOUR_PACKAGES, VEHICLE_CLASSES, calculateQuotes, findQuote, formatCurrency, detectAirport } from '@/lib/pricing'
-import { formatDuration } from '@/lib/routing'
+import { formatDuration, getRoute } from '@/lib/routing'
+import { computePickupTime, formatHHMM, PICKUP_BUFFER_MIN } from '@/lib/scheduling'
 
 const RouteMap = dynamic(() => import('./RouteMap'), { ssr: false })
+const TripMap = dynamic(() => import('./TripMap'), { ssr: false })
 
 const STORAGE_KEY = 'gec.booking.draft'
 const STORAGE_VERSION = 5
@@ -179,6 +181,14 @@ function LocationField({ label, hint, value, onChange, placeholder, allowMyLocat
             Change
           </button>
         </div>
+        <input
+          type="text"
+          value={value.details || ''}
+          onChange={(e) => onChange({ ...value, details: e.target.value })}
+          className="form-field"
+          placeholder="House/flat number, gate code, or notes for driver"
+          style={{ marginTop: '0.5rem', fontSize: '0.875rem' }}
+        />
       </div>
     )
   }
@@ -380,6 +390,20 @@ export default function BookingWizard({ defaultService = '' }) {
   const quotes = useMemo(() => calculateQuotes(data), [data])
   const quote = useMemo(() => findQuote(quotes, data.vehicle), [quotes, data.vehicle])
 
+  const [route, setRoute] = useState(null)
+  const pickupCoordKey = data.pickup?.coords ? data.pickup.coords.join(',') : ''
+  const dropoffCoordKey = data.dropoff?.coords ? data.dropoff.coords.join(',') : ''
+  useEffect(() => {
+    if (!pickupCoordKey || !dropoffCoordKey) { setRoute(null); return }
+    const ctrl = new AbortController()
+    const t = setTimeout(() => {
+      getRoute(data.pickup.coords, data.dropoff.coords, { signal: ctrl.signal })
+        .then((r) => { if (r) setRoute(r) })
+        .catch(() => {})
+    }, 300)
+    return () => { clearTimeout(t); ctrl.abort() }
+  }, [pickupCoordKey, dropoffCoordKey])
+
   const step4Valid = useMemo(() => {
     return Boolean(data.name.trim() && data.email.trim() && data.phone.trim() &&
       /\S+@\S+\.\S+/.test(data.email))
@@ -389,7 +413,7 @@ export default function BookingWizard({ defaultService = '' }) {
     setSubmitting(true)
     setErrorMsg('')
     try {
-      const payload = buildSubmissionPayload(data, quote)
+      const payload = buildSubmissionPayload(data, quote, route)
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -469,8 +493,8 @@ export default function BookingWizard({ defaultService = '' }) {
       <div key={step} className="gec-step-enter">
         {step === 1 && <Step1 data={data} update={update} onPick={() => setStep(2)} />}
         {step === 2 && <Step2 data={data} update={update} />}
-        {step === 3 && <Step3 data={data} update={update} quotes={quotes} />}
-        {step === 4 && <Step4 data={data} update={update} quote={quote} errorMsg={errorMsg} />}
+        {step === 3 && <Step3 data={data} update={update} quotes={quotes} route={route} />}
+        {step === 4 && <Step4 data={data} update={update} quote={quote} route={route} errorMsg={errorMsg} />}
       </div>
 
       {step > 1 && (
@@ -632,6 +656,13 @@ function TourSection({ data, update }) {
           />
         </div>
       )}
+      {data.pickup?.coords && (
+        <TripMap
+          points={[
+            { key: 'pickup', label: 'A', color: '#C4A55A', value: data.pickup, onChange: (v) => update({ pickup: v }) },
+          ]}
+        />
+      )}
     </div>
   )
 }
@@ -667,7 +698,14 @@ function PointToPointSection({ data, update }) {
           />
         </div>
       )}
-      <RouteMap pickup={data.pickup} dropoff={data.dropoff} />
+      {(data.pickup?.coords || data.dropoff?.coords) && (
+        <TripMap
+          points={[
+            { key: 'pickup', label: 'A', color: '#C4A55A', value: data.pickup, onChange: (v) => update({ pickup: v }) },
+            { key: 'dropoff', label: 'B', color: '#F0EDE6', value: data.dropoff, onChange: (v) => update({ dropoff: v }) },
+          ]}
+        />
+      )}
     </div>
   )
 }
@@ -687,11 +725,18 @@ function HourlySection({ data, update }) {
         <FieldLabel hint="4 hour minimum · £65/hr">Hours</FieldLabel>
         <Stepper value={data.hours} onChange={(v) => update({ hours: v })} min={4} max={12} suffix="hrs" />
       </div>
+      {data.pickup?.coords && (
+        <TripMap
+          points={[
+            { key: 'pickup', label: 'A', color: '#C4A55A', value: data.pickup, onChange: (v) => update({ pickup: v }) },
+          ]}
+        />
+      )}
     </div>
   )
 }
 
-function Step3({ data, update, quotes }) {
+function Step3({ data, update, quotes, route }) {
   if (!quotes) {
     return (
       <div>
@@ -721,7 +766,7 @@ function Step3({ data, update, quotes }) {
             <RouteMap pickup={data.pickup} dropoff={data.dropoff} />
           </div>
         )}
-        <TripSummary data={data} />
+        <TripSummary data={data} route={route} />
       </div>
     )
   }
@@ -798,12 +843,12 @@ function Step3({ data, update, quotes }) {
         Final fixed price confirmed when we reply. No surge, no surprises.
       </p>
 
-      <TripSummary data={data} />
+      <TripSummary data={data} route={route} />
     </div>
   )
 }
 
-function TripSummary({ data }) {
+function TripSummary({ data, route }) {
   const rows = []
   const p2pAirport = data.service === 'p2p' ? (detectAirport(data.pickup) || detectAirport(data.dropoff)) : null
   const serviceLabel = p2pAirport ? 'Airport Transfer' : SERVICE_LABEL[data.service]
@@ -823,11 +868,21 @@ function TripSummary({ data }) {
     if (data.pickup) rows.push(['Pickup', data.pickup.short])
   }
 
-  const whenLabel = data.timeMode === 'arrive' ? 'Arrive by' : 'Pickup'
   if (data.pickupMode === 'now') {
     rows.push(['Pickup', 'As soon as possible'])
   } else if (data.date) {
-    rows.push([whenLabel, `${formatDate(data.date)} · ${data.time}`])
+    if (data.timeMode === 'arrive') {
+      rows.push(['Arrive by', `${formatDate(data.date)} · ${data.time} at drop-off`])
+      const pickup = computePickupTime(data.date, data.time, route?.durationSeconds)
+      rows.push([
+        'Driver pickup',
+        pickup
+          ? `${formatHHMM(pickup)} · ${formatDuration(route.durationSeconds)} drive + ${PICKUP_BUFFER_MIN} min buffer`
+          : 'Calculating route…',
+      ])
+    } else {
+      rows.push(['Pickup', `${formatDate(data.date)} · ${data.time}`])
+    }
   }
 
   return (
@@ -855,9 +910,18 @@ function TripSummary({ data }) {
   )
 }
 
-function Step4({ data, update, quote, errorMsg }) {
+function Step4({ data, update, quote, route, errorMsg }) {
   const p2pAirport = data.service === 'p2p' ? (detectAirport(data.pickup) || detectAirport(data.dropoff)) : null
   const serviceLabel = p2pAirport ? 'Airport Transfer' : SERVICE_LABEL[data.service]
+  const pickupTime = data.timeMode === 'arrive' ? computePickupTime(data.date, data.time, route?.durationSeconds) : null
+  let whenSummary = ''
+  if (data.pickupMode === 'now') {
+    whenSummary = ' · ASAP'
+  } else if (data.date) {
+    whenSummary = data.timeMode === 'arrive'
+      ? ` · arrive ${data.time}${pickupTime ? ` (pickup ${formatHHMM(pickupTime)})` : ''}`
+      : ` · ${formatDate(data.date)} ${data.time}`
+  }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
       {quote && !quote.custom && (
@@ -869,7 +933,7 @@ function Step4({ data, update, quote, errorMsg }) {
           fontSize: '0.875rem',
           color: 'var(--white)',
         }}>
-          Estimated <strong>{formatCurrency(quote.low)}–{formatCurrency(quote.high)}</strong> · {quote.vehicle.label} · {serviceLabel}{data.pickupMode === 'now' ? ' · ASAP' : data.date ? ` · ${formatDate(data.date)} ${data.time}` : ''}
+          Estimated <strong>{formatCurrency(quote.low)}–{formatCurrency(quote.high)}</strong> · {quote.vehicle.label} · {serviceLabel}{whenSummary}
         </div>
       )}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.25rem' }} className="max-sm:!grid-cols-1">
@@ -905,7 +969,7 @@ function Step4({ data, update, quote, errorMsg }) {
   )
 }
 
-function buildSubmissionPayload(data, quote) {
+function buildSubmissionPayload(data, quote, route) {
   const pickupApt = data.service === 'p2p' ? detectAirport(data.pickup) : null
   const dropoffApt = data.service === 'p2p' ? detectAirport(data.dropoff) : null
   const detectedAirport = pickupApt || dropoffApt
@@ -933,9 +997,12 @@ function buildSubmissionPayload(data, quote) {
   }
   if (data.pickupMode === 'now') {
     summary.push('When: As soon as possible')
+  } else if (data.timeMode === 'arrive') {
+    summary.push(`Arrive by: ${data.date} ${data.time}`)
+    const pickup = computePickupTime(data.date, data.time, route?.durationSeconds)
+    if (pickup) summary.push(`Driver pickup: ${formatHHMM(pickup)} (${Math.round(route.durationSeconds / 60)} min drive + ${PICKUP_BUFFER_MIN} min buffer)`)
   } else {
-    const verb = data.timeMode === 'arrive' ? 'Arrive by' : 'Pickup at'
-    summary.push(`${verb}: ${data.date} ${data.time}`)
+    summary.push(`Pickup at: ${data.date} ${data.time}`)
   }
   if (quote && !quote.custom) {
     summary.push(`Vehicle: ${quote.vehicle.label} (${quote.vehicle.vehicle})`)
@@ -968,6 +1035,7 @@ function buildSubmissionPayload(data, quote) {
       time: data.time,
       notes: data.notes,
       quote: quote && !quote.custom ? { low: quote.low, high: quote.high } : null,
+      routeDurationSeconds: route?.durationSeconds || null,
     },
   }
 }
