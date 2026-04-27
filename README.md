@@ -1,169 +1,81 @@
-# SoLa - Glasgow Chauffeur Service
+# Glasgow Executive Chauffeurs
 
-A professional chauffeur service website built with React and Tailwind CSS. This single-page application showcases SoLa's chauffeur services across Glasgow and Scotland with an elegant navy/black and gold color scheme.
+Marketing site and booking wizard for [gec.limo](https://gec.limo) — a chauffeur service operating across Glasgow and Scotland.
 
-## Features
+## Stack
 
-- ✨ **Modern Design**: Luxury-focused design with smooth animations and transitions
-- 📱 **Fully Responsive**: Optimized for all devices from mobile to desktop
-- 🎨 **Custom Color Scheme**: Navy/black background with gold accents
-- 🚀 **Performance Optimized**: Built with Vite for lightning-fast development
-- 📝 **Form Validation**: Contact form with comprehensive validation
-- 🎯 **Smooth Scrolling**: Animated scroll behavior and section navigation
+- **Next.js 15** (App Router) on **React 19**, deployed to **Cloudflare Workers** via [`@opennextjs/cloudflare`](https://github.com/opennextjs/opennextjs-cloudflare)
+- **Tailwind CSS 3** with self-hosted Playfair Display / DM Sans / Space Mono via `next/font`
+- **MapLibre GL** + MapTiler tiles for interactive maps; **OSRM** for driving routes
+- **Resend** for transactional email (contact + booking submissions)
 
-## Sections
+## Project layout
 
-1. **Hero Section**: Compelling landing section focused on Glasgow chauffeur service
-2. **About Us**: Local Glasgow chauffeur company since 2014
-3. **Services**: Three main service offerings:
-   - Glasgow Airport Transfers
-   - Scotland Tours
-   - Corporate Chauffeur
-4. **Why Choose Us**: Six key benefits with conversational, authentic tone
-5. **Contact Form**: Booking form with Glasgow contact details
-6. **Footer**: Company footer with local information
+```
+app/                         # 8 pre-rendered routes + edge contact endpoint
+  layout.jsx                 # Root metadata, fonts, JSON-LD
+  page.jsx                   # Home
+  airport-transfers/
+  scotland-tours/
+  corporate-chauffeurs/
+  fleet/
+  about/
+  contact/
+  not-found.jsx
+  sitemap.js                 # Dynamic sitemap
+  robots.js                  # Dynamic robots.txt
+  api/contact/route.js       # Edge runtime: validates and forwards via Resend
 
-## Tech Stack
+components/                  # Shared site components (Navbar, Footer, Maps, etc.)
+  BookingWizard.jsx          # Orchestrator: state, persistence, submission
+  booking/                   # Atoms, molecules, step organisms (atomic design)
+    FieldLabel, PinIcon, Stepper, ProgressBar
+    LocationField, TimePicker, TripSummary
+    Step1Service, Step2Trip, Step3Quote, Step4Details
+    constants.js, payload.js
 
-- **React 18**: Modern React with hooks
-- **Vite**: Next-generation frontend tooling
-- **Tailwind CSS**: Utility-first CSS framework
-- **Google Fonts**: Inter and Playfair Display typography
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 16+ installed
-- npm or yarn package manager
-
-### Installation
-
-1. Clone the repository
-```bash
-git clone <repository-url>
-cd urbansoul-travel
+lib/
+  pricing.js                 # Vehicle classes, quotes, surcharge tiers
+  scheduling.js              # ASAP / arrive-by / depart-at logic, freshness checks
+  geocode.js                 # MapTiler search + reverse geocode + browser geo
+  routing.js                 # OSRM trip duration
+  seo.js                     # Per-page metadata + JSON-LD builders
 ```
 
-2. Install dependencies
+## Development
+
 ```bash
 npm install
+npm run dev              # Next dev server on :3000
 ```
 
-3. Start the development server
-```bash
-npm run dev
-```
+### Environment variables
 
-4. Open your browser and navigate to `http://localhost:5173`
+Set in `.env.local` for dev, and as Workers secrets/vars for prod:
 
-### Build for Production
+| Variable                     | Purpose                                            |
+| ---------------------------- | -------------------------------------------------- |
+| `NEXT_PUBLIC_MAPTILER_KEY`   | MapTiler tiles + geocoding (used client-side)      |
+| `RESEND_API_KEY`             | Resend API key for the contact endpoint            |
+| `TO_EMAIL`                   | Booking inbox (defaults to `bookings@gec.limo`)    |
 
-```bash
-npm run build
-```
-
-The optimized production build will be created in the `dist` directory.
-
-### Preview Production Build
+## Build & deploy
 
 ```bash
-npm run preview
+npm run build            # Standard Next.js production build
+npm run preview          # Build via OpenNext + run locally on Workers runtime
+npm run deploy           # Build via OpenNext + push to Cloudflare Workers
 ```
 
-## Project Structure
+`npm run deploy` invokes `wrangler deploy` under the hood; bindings and secrets are configured in [wrangler.toml](wrangler.toml).
 
-```
-urbansoul-travel/
-├── src/
-│   ├── components/
-│   │   ├── Navbar.jsx         # Navigation bar with mobile menu
-│   │   ├── Hero.jsx            # Hero section with animations
-│   │   ├── About.jsx           # About us section
-│   │   ├── Services.jsx        # Services grid
-│   │   ├── WhyChooseUs.jsx     # Benefits section
-│   │   ├── Contact.jsx         # Contact form with validation
-│   │   └── Footer.jsx          # Footer with links
-│   ├── App.jsx                 # Main app component
-│   ├── main.jsx                # App entry point
-│   └── index.css               # Global styles and Tailwind setup
-├── public/                      # Static assets
-├── index.html                   # HTML template
-├── tailwind.config.js          # Tailwind configuration
-├── vite.config.js              # Vite configuration
-└── package.json                # Project dependencies
-```
+## Booking wizard
 
-## Customization
+The wizard at `/contact` walks the user through:
 
-### Colors
+1. **Service** — Point-to-point, hourly, or Scotland tour
+2. **Trip** — Locations (with autocomplete + map), date/time, optional flight number for airport transfers
+3. **Quote** — Vehicle class selection with live price ranges (includes short-notice surcharges)
+4. **Details** — Contact info, freshness re-check, submit
 
-The color scheme is defined in `tailwind.config.js`:
-
-```javascript
-colors: {
-  navy: { /* Navy shades */ },
-  gold: { /* Gold shades */ }
-}
-```
-
-### Content
-
-All content can be easily modified within the component files. Simply update the text, images, and data arrays in each component.
-
-### Images
-
-Replace the Unsplash placeholder images with your own by updating the `src` attributes in:
-- `About.jsx`: Company/vehicle images
-- `Services.jsx`: Service-specific images
-
-## Form Validation
-
-The contact form includes validation for:
-- Required fields
-- Email format
-- Phone number format
-- Date selection
-
-## Browser Support
-
-- Chrome (latest)
-- Firefox (latest)
-- Safari (latest)
-- Edge (latest)
-
-## Performance
-
-- Lighthouse Score: 95+ (Performance, Accessibility, Best Practices, SEO)
-- First Contentful Paint: < 1.5s
-- Time to Interactive: < 3.0s
-- Mobile Optimized: Yes
-
-## License
-
-This project is licensed under the MIT License.
-
-## SEO Optimization
-
-Optimized for local Glasgow chauffeur searches:
-- Glasgow chauffeur service
-- Airport transfers Glasgow
-- Corporate travel Glasgow
-- Scotland tours from Glasgow
-- Executive chauffeur Scotland
-
-## Credits
-
-- Design & Development: SoLa
-- Icons: Heroicons
-- Fonts: Google Fonts (Inter, Playfair Display)
-- Images: Unsplash (to be replaced with actual company images)
-
-## Support
-
-For support, email bookings@solachauffeur.co.uk or contact us through the website form.
-
----
-
-SoLa - Glasgow's trusted chauffeur service since 2014
-# GEC
+Draft state is persisted to `localStorage` (versioned via `STORAGE_VERSION`). A 60-second tick re-evaluates surcharge tiers and schedule freshness while the tab is open. On submit, the payload is rendered to an HTML email and sent via the edge `/api/contact` endpoint.
