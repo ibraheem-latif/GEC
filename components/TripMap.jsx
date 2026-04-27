@@ -16,12 +16,9 @@ export default function TripMap({ points }) {
   const markersRef = useRef({})
   const pointsRef = useRef(points)
   const [focusedKey, setFocusedKey] = useState(null)
-  const focusedRef = useRef(null)
 
   useEffect(() => { pointsRef.current = points }, [points])
-  useEffect(() => { focusedRef.current = focusedKey }, [focusedKey])
 
-  // Mount the map once
   useEffect(() => {
     if (!containerRef.current || mapRef.current || !MAPTILER_KEY) return
     let cancelled = false
@@ -64,25 +61,16 @@ export default function TripMap({ points }) {
     }
   }, [])
 
-  // Reconcile markers + viewport whenever the points array changes
   useEffect(() => {
     if (!mapReadyRef.current) return
     syncMarkers()
     applyView()
   }, [points.map((p) => `${p.key}:${p.value?.coords?.join(',') || ''}`).join('|')])
 
-  // Re-apply view when focus toggles
   useEffect(() => {
     if (!mapReadyRef.current) return
     applyView()
   }, [focusedKey])
-
-  // Drop focus if the focused point loses its coords
-  useEffect(() => {
-    if (!focusedKey) return
-    const f = points.find((p) => p.key === focusedKey)
-    if (!f?.value?.coords) setFocusedKey(null)
-  }, [focusedKey, points])
 
   function syncMarkers() {
     const map = mapRef.current
@@ -149,8 +137,8 @@ export default function TripMap({ points }) {
     const map = mapRef.current
     const maplibregl = maplibreRef.current
     if (!map || !maplibregl) return
-    const focused = focusedRef.current
-      ? pointsRef.current.find((p) => p.key === focusedRef.current && p.value?.coords)
+    const focused = focusedKey
+      ? pointsRef.current.find((p) => p.key === focusedKey && p.value?.coords)
       : null
     if (focused) {
       map.easeTo({ center: focused.value.coords, zoom: FOCUS_ZOOM, duration: 600 })

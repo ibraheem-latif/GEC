@@ -225,7 +225,7 @@ function AnimatedHero() {
           style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}
         >
           <Link href="/contact" className="btn-gold">
-            RESERVE YOUR JOURNEY
+            PLAN YOUR JOURNEY
           </Link>
           <Link href="/fleet" className="btn-ghost">
             VIEW FLEET

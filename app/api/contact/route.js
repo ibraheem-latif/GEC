@@ -1,3 +1,7 @@
+import { ASAP_LEAD_MIN, buildSchedule, formatBookingDate, formatDriveMinutes, formatHHMM, formatLeadTime, PICKUP_BUFFER_MIN } from '@/lib/scheduling'
+
+const UK_TZ = 'Europe/London'
+
 const FROM_ADDRESS = 'Glasgow Executive Chauffeurs <bookings@gec.limo>'
 const DEFAULT_TO = 'bookings@gec.limo'
 
@@ -46,36 +50,20 @@ const TOUR_LABEL = {
   custom: 'Custom itinerary',
 }
 
-const PICKUP_BUFFER_MIN = 15
-
-function formatHHMM(date) {
-  return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`
-}
-
-function computePickupTime(date, time, durationSeconds) {
-  if (!date || !time || !durationSeconds) return null
-  const arrival = new Date(`${date}T${time}`)
-  if (Number.isNaN(arrival.getTime())) return null
-  return new Date(arrival.getTime() - (durationSeconds + PICKUP_BUFFER_MIN * 60) * 1000)
-}
-
-function formatWhenDate(b) {
-  const d = new Date(b.date + 'T00:00:00')
-  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })
-}
-
 function buildScheduleRows(b) {
-  if (b.pickupMode === 'now') return [row('When', 'ASAP — dispatch nearest driver')]
-  if (!b.date) return []
-  const dateStr = formatWhenDate(b)
-  if (b.timeMode !== 'arrive') {
-    return [row('Pickup at', `${dateStr} · ${b.time || ''}`)]
+  const sched = buildSchedule(b, b.routeDurationSeconds)
+  if (!sched) return []
+  if (sched.mode === 'asap') {
+    return [
+      row('When', 'As soon as possible — dispatch nearest driver'),
+      row('Driver pickup', `~${formatHHMM(sched.driverPickup, { timeZone: UK_TZ })} · within ${formatLeadTime(ASAP_LEAD_MIN)} of dispatch`),
+    ]
   }
-  const rows = [row('Arrive by', `${dateStr} · ${b.time || ''} at drop-off`)]
-  const pickup = computePickupTime(b.date, b.time, b.routeDurationSeconds)
-  if (pickup) {
-    const drive = Math.round(b.routeDurationSeconds / 60)
-    rows.push(row('Driver pickup', `${formatHHMM(pickup)} · ${drive} min drive + ${PICKUP_BUFFER_MIN} min buffer`))
+  const dateStr = formatBookingDate(sched.date, { withYear: true })
+  if (sched.mode === 'depart') return [row('Pickup at', `${dateStr} · ${sched.time || ''}`)]
+  const rows = [row('Arrive by', `${dateStr} · ${sched.time || ''} at drop-off`)]
+  if (sched.driverPickup) {
+    rows.push(row('Driver pickup', `${formatHHMM(sched.driverPickup)} · ${formatDriveMinutes(sched.driveSeconds)} drive + ${PICKUP_BUFFER_MIN} min buffer`))
   }
   return rows
 }

@@ -5,8 +5,8 @@ import dynamic from 'next/dynamic'
 import { EMAIL } from '@/lib/seo'
 import { searchPlaces, reverseGeocode, getCurrentPosition } from '@/lib/geocode'
 import { TOUR_PACKAGES, VEHICLE_CLASSES, calculateQuotes, findQuote, formatCurrency, detectAirport } from '@/lib/pricing'
-import { formatDuration, getRoute } from '@/lib/routing'
-import { computePickupTime, formatHHMM, PICKUP_BUFFER_MIN } from '@/lib/scheduling'
+import { getRoute } from '@/lib/routing'
+import { ASAP_LEAD_MIN, buildSchedule, checkScheduleFreshness, formatBookingDate, formatDriveMinutes, formatHHMM, formatLeadTime, PICKUP_BUFFER_MIN } from '@/lib/scheduling'
 
 const RouteMap = dynamic(() => import('./RouteMap'), { ssr: false })
 const TripMap = dynamic(() => import('./TripMap'), { ssr: false })
@@ -52,11 +52,6 @@ const initialData = (defaultService) => ({
   notes: '',
 })
 
-const formatDate = (iso) => {
-  if (!iso) return ''
-  const d = new Date(iso + 'T00:00:00')
-  return d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' })
-}
 
 const todayISO = () => new Date().toISOString().split('T')[0]
 const nowHHMM = () => {
@@ -307,7 +302,7 @@ function TimePicker({ data, update }) {
 
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }} className="max-sm:!grid-cols-1">
             <div>
-              <FieldLabel hint={data.date ? formatDate(data.date) : ''}>Date</FieldLabel>
+              <FieldLabel hint={formatBookingDate(data.date)}>Date</FieldLabel>
               <input
                 type="date"
                 value={data.date}
@@ -387,7 +382,15 @@ export default function BookingWizard({ defaultService = '' }) {
     return false
   }, [data])
 
-  const quotes = useMemo(() => calculateQuotes(data), [data])
+  // Tick once a minute while the wizard is open so live-derived state (surcharge tier,
+  // freshness check) reflects the actual clock if a tab has been left open.
+  const [nowTs, setNowTs] = useState(() => Date.now())
+  useEffect(() => {
+    const id = setInterval(() => setNowTs(Date.now()), 60_000)
+    return () => clearInterval(id)
+  }, [])
+
+  const quotes = useMemo(() => calculateQuotes(data, new Date(nowTs)), [data, nowTs])
   const quote = useMemo(() => findQuote(quotes, data.vehicle), [quotes, data.vehicle])
 
   const [route, setRoute] = useState(null)
@@ -398,7 +401,10 @@ export default function BookingWizard({ defaultService = '' }) {
     const ctrl = new AbortController()
     const t = setTimeout(() => {
       getRoute(data.pickup.coords, data.dropoff.coords, { signal: ctrl.signal })
-        .then((r) => { if (r) setRoute(r) })
+        .then((r) => {
+          if (!r || ctrl.signal.aborted) return
+          setRoute((prev) => (prev?.durationSeconds === r.durationSeconds ? prev : r))
+        })
         .catch(() => {})
     }, 300)
     return () => { clearTimeout(t); ctrl.abort() }
@@ -409,7 +415,14 @@ export default function BookingWizard({ defaultService = '' }) {
       /\S+@\S+\.\S+/.test(data.email))
   }, [data])
 
+  const staleMsg = useMemo(() => checkScheduleFreshness(data, new Date(nowTs)), [data, nowTs])
+
   const handleSubmit = async () => {
+    const stale = checkScheduleFreshness(data)
+    if (stale) {
+      setErrorMsg(stale)
+      return
+    }
     setSubmitting(true)
     setErrorMsg('')
     try {
@@ -494,7 +507,7 @@ export default function BookingWizard({ defaultService = '' }) {
         {step === 1 && <Step1 data={data} update={update} onPick={() => setStep(2)} />}
         {step === 2 && <Step2 data={data} update={update} />}
         {step === 3 && <Step3 data={data} update={update} quotes={quotes} route={route} />}
-        {step === 4 && <Step4 data={data} update={update} quote={quote} route={route} errorMsg={errorMsg} />}
+        {step === 4 && <Step4 data={data} update={update} quote={quote} route={route} errorMsg={errorMsg || staleMsg} />}
       </div>
 
       {step > 1 && (
@@ -519,11 +532,11 @@ export default function BookingWizard({ defaultService = '' }) {
             <button
               type="button"
               className="btn-gold"
-              disabled={!step4Valid || submitting}
-              style={{ opacity: step4Valid && !submitting ? 1 : 0.5, cursor: step4Valid && !submitting ? 'pointer' : 'not-allowed' }}
+              disabled={!step4Valid || submitting || !!staleMsg}
+              style={{ opacity: step4Valid && !submitting && !staleMsg ? 1 : 0.5, cursor: step4Valid && !submitting && !staleMsg ? 'pointer' : 'not-allowed' }}
               onClick={handleSubmit}
             >
-              {submitting ? 'Sending…' : 'Submit booking request'}
+              {submitting ? 'Sending…' : staleMsg ? 'Update time to continue' : 'Submit booking request'}
             </button>
           )}
         </div>
@@ -833,6 +846,22 @@ function Step3({ data, update, quotes, route }) {
         })}
       </div>
 
+      {(() => {
+        const sc = quotes[0]?.breakdown?.find((b) => b.label?.startsWith('Short notice'))
+        if (!sc) return null
+        return (
+          <p style={{
+            fontFamily: 'var(--font-dm-sans), sans-serif',
+            fontSize: '0.85rem',
+            color: 'var(--gold)',
+            margin: '0 0 0.75rem',
+            lineHeight: 1.6,
+          }}>
+            Includes {sc.label.toLowerCase()}: +{formatCurrency(sc.amount)}
+          </p>
+        )
+      })()}
+
       <p style={{
         fontFamily: 'var(--font-dm-sans), sans-serif',
         fontSize: '0.85rem',
@@ -868,21 +897,20 @@ function TripSummary({ data, route }) {
     if (data.pickup) rows.push(['Pickup', data.pickup.short])
   }
 
-  if (data.pickupMode === 'now') {
-    rows.push(['Pickup', 'As soon as possible'])
-  } else if (data.date) {
-    if (data.timeMode === 'arrive') {
-      rows.push(['Arrive by', `${formatDate(data.date)} · ${data.time} at drop-off`])
-      const pickup = computePickupTime(data.date, data.time, route?.durationSeconds)
-      rows.push([
-        'Driver pickup',
-        pickup
-          ? `${formatHHMM(pickup)} · ${formatDuration(route.durationSeconds)} drive + ${PICKUP_BUFFER_MIN} min buffer`
-          : 'Calculating route…',
-      ])
-    } else {
-      rows.push(['Pickup', `${formatDate(data.date)} · ${data.time}`])
-    }
+  const sched = buildSchedule(data, route?.durationSeconds)
+  if (sched?.mode === 'asap') {
+    rows.push(['When', 'As soon as possible'])
+    rows.push(['Driver pickup', `~${formatHHMM(sched.driverPickup)} · within ${formatLeadTime(ASAP_LEAD_MIN)} of dispatch`])
+  } else if (sched?.mode === 'arrive') {
+    rows.push(['Arrive by', `${formatBookingDate(sched.date)} · ${sched.time} at drop-off`])
+    rows.push([
+      'Driver pickup',
+      sched.driverPickup
+        ? `${formatHHMM(sched.driverPickup)} · ${formatDriveMinutes(sched.driveSeconds)} drive + ${PICKUP_BUFFER_MIN} min buffer`
+        : 'Calculating route…',
+    ])
+  } else if (sched?.mode === 'depart') {
+    rows.push(['Pickup', `${formatBookingDate(sched.date)} · ${sched.time}`])
   }
 
   return (
@@ -913,14 +941,14 @@ function TripSummary({ data, route }) {
 function Step4({ data, update, quote, route, errorMsg }) {
   const p2pAirport = data.service === 'p2p' ? (detectAirport(data.pickup) || detectAirport(data.dropoff)) : null
   const serviceLabel = p2pAirport ? 'Airport Transfer' : SERVICE_LABEL[data.service]
-  const pickupTime = data.timeMode === 'arrive' ? computePickupTime(data.date, data.time, route?.durationSeconds) : null
+  const sched = buildSchedule(data, route?.durationSeconds)
   let whenSummary = ''
-  if (data.pickupMode === 'now') {
-    whenSummary = ' · ASAP'
-  } else if (data.date) {
-    whenSummary = data.timeMode === 'arrive'
-      ? ` · arrive ${data.time}${pickupTime ? ` (pickup ${formatHHMM(pickupTime)})` : ''}`
-      : ` · ${formatDate(data.date)} ${data.time}`
+  if (sched?.mode === 'asap') {
+    whenSummary = ` · ASAP (pickup ~${formatHHMM(sched.driverPickup)})`
+  } else if (sched?.mode === 'arrive') {
+    whenSummary = ` · arrive ${sched.time}${sched.driverPickup ? ` (pickup ${formatHHMM(sched.driverPickup)})` : ''}`
+  } else if (sched?.mode === 'depart') {
+    whenSummary = ` · ${formatBookingDate(sched.date)} ${sched.time}`
   }
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
@@ -995,18 +1023,26 @@ function buildSubmissionPayload(data, quote, route) {
     summary.push(`Hours: ${data.hours}`)
     if (data.pickup) summary.push(`Pickup: ${data.pickup.name}`)
   }
-  if (data.pickupMode === 'now') {
+  const sched = buildSchedule(data, route?.durationSeconds)
+  if (sched?.mode === 'asap') {
     summary.push('When: As soon as possible')
-  } else if (data.timeMode === 'arrive') {
-    summary.push(`Arrive by: ${data.date} ${data.time}`)
-    const pickup = computePickupTime(data.date, data.time, route?.durationSeconds)
-    if (pickup) summary.push(`Driver pickup: ${formatHHMM(pickup)} (${Math.round(route.durationSeconds / 60)} min drive + ${PICKUP_BUFFER_MIN} min buffer)`)
-  } else {
-    summary.push(`Pickup at: ${data.date} ${data.time}`)
+    summary.push(`Driver pickup: ~${formatHHMM(sched.driverPickup)} (within ${formatLeadTime(ASAP_LEAD_MIN)} of dispatch)`)
+  } else if (sched?.mode === 'arrive') {
+    summary.push(`Arrive by: ${sched.date} ${sched.time}`)
+    if (sched.driverPickup) {
+      summary.push(`Driver pickup: ${formatHHMM(sched.driverPickup)} (${formatDriveMinutes(sched.driveSeconds)} drive + ${PICKUP_BUFFER_MIN} min buffer)`)
+    }
+  } else if (sched?.mode === 'depart') {
+    summary.push(`Pickup at: ${sched.date} ${sched.time}`)
   }
   if (quote && !quote.custom) {
     summary.push(`Vehicle: ${quote.vehicle.label} (${quote.vehicle.vehicle})`)
     summary.push(`Estimate: ${formatCurrency(quote.low)}–${formatCurrency(quote.high)}`)
+    for (const item of quote.breakdown || []) {
+      if (item.label?.startsWith('Short notice') || item.label?.startsWith('Late-night')) {
+        summary.push(`  · ${item.label}: +${formatCurrency(item.amount)}`)
+      }
+    }
   }
   if (data.notes) summary.push(`Notes: ${data.notes}`)
 
